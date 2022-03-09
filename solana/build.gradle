@@ -1,5 +1,5 @@
 plugins {
-    id 'com.android.application'
+    id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
 }
 
@@ -9,11 +9,11 @@ android {
     compileSdk versions.compileSdk
 
     defaultConfig {
-        applicationId "com.portto.valuedapp"
         minSdk versions.minSdk
         targetSdk versions.compileSdk
         versionCode versions.versionCode
         versionName versions.versionName
+        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
@@ -29,15 +29,10 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    buildFeatures {
-        viewBinding true
-    }
 }
 
 dependencies {
-    implementation project(':solana')
+    api project(':core')
     implementation "androidx.core:core-ktx:$versions.androidx_core"
     implementation "androidx.appcompat:appcompat:$versions.androidx_appcompat"
-    implementation "com.google.android.material:material:$versions.material"
-    implementation "androidx.constraintlayout:constraintlayout:$versions.constraintlayout"
 }
