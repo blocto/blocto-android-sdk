@@ -12,9 +12,6 @@ sealed class Method<T>(
 
     open fun encodeToUri(): Uri.Builder {
         return Uri.Builder()
-            .scheme(Const.BLOCTO_URI_SCHEME)
-            .authority(Const.BLOCTO_URI_AUTHORITY)
-            .appendPath(Const.BLOCTO_URI_PATH)
             .appendQueryParameter(Const.KEY_BLOCKCHAIN, blockchain.value)
     }
 }

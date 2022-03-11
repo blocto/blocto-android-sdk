@@ -1,5 +1,6 @@
 package com.portto.sdk.core
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -9,23 +10,39 @@ object BloctoSDK {
 
     private var appId: String? = null
     private val requestMap = mutableMapOf<String, Method<*>>()
+    private lateinit var bloctoPackage: String
+    private lateinit var bloctoUriAuthority: String
 
-    fun init(appId: String) {
+    fun init(appId: String, debug: Boolean = false) {
         this.appId = appId
+        if (debug) {
+            bloctoPackage = Const.BLOCTO_PACKAGE_DEBUG
+            bloctoUriAuthority = Const.BLOCTO_URI_AUTHORITY_DEBUG
+        } else {
+            bloctoPackage = Const.BLOCTO_PACKAGE
+            bloctoUriAuthority = Const.BLOCTO_URI_AUTHORITY
+        }
     }
 
     fun send(context: Context, method: Method<*>) {
-        if (appId == null) throw Throwable("Need to set app id before use Blocto SDK")
+        require(!appId.isNullOrEmpty()) { "Need to set app id before use Blocto SDK" }
         val requestId = UUID.randomUUID().toString()
         requestMap[requestId] = method
         val uri = method.encodeToUri()
+            .scheme(Const.BLOCTO_URI_SCHEME)
+            .authority(bloctoUriAuthority)
+            .appendPath(Const.BLOCTO_URI_PATH)
             .appendQueryParameter(Const.KEY_APP_ID, appId)
             .appendQueryParameter(Const.KEY_REQUEST_ID, requestId)
             .build()
         val intent = Intent(Intent.ACTION_VIEW, uri).apply {
-            setPackage(Const.BLOCTO_PACKAGE)
+            setPackage(bloctoPackage)
         }
-        context.startActivity(intent)
+        try {
+            context.startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            TODO("handle request using browser")
+        }
     }
 
     fun handleCallback(uri: Uri?) {
