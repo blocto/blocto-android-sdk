@@ -14,7 +14,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="sdk" />
+                <data android:scheme="blocto" />
             </intent-filter>
         </activity>
     </application>
