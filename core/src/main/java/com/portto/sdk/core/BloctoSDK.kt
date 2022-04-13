@@ -4,39 +4,37 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import com.portto.sdk.core.method.Method
+import com.portto.sdk.core.method.RequestAccountMethod
+import com.portto.sdk.core.method.SignAndSendTransactionMethod
 import java.util.*
 
 object BloctoSDK {
 
     private var appId: String? = null
     private val requestMap = mutableMapOf<String, Method<*>>()
-    private lateinit var bloctoPackage: String
-    private lateinit var bloctoUriAuthority: String
+
+    var debug: Boolean = false
+        private set
 
     fun init(appId: String, debug: Boolean = false) {
         this.appId = appId
-        if (debug) {
-            bloctoPackage = Const.BLOCTO_PACKAGE_DEBUG
-            bloctoUriAuthority = Const.BLOCTO_URI_AUTHORITY_DEBUG
-        } else {
-            bloctoPackage = Const.BLOCTO_PACKAGE
-            bloctoUriAuthority = Const.BLOCTO_URI_AUTHORITY
-        }
+        this.debug = debug
     }
 
     fun send(context: Context, method: Method<*>) {
-        require(!appId.isNullOrEmpty()) { "Need to set app id before use Blocto SDK" }
+        val appId = this.appId.takeIf { !it.isNullOrEmpty() } ?: kotlin.run {
+            throw NullPointerException("Need to set app id before use Blocto SDK")
+        }
         val requestId = UUID.randomUUID().toString()
         requestMap[requestId] = method
-        val uri = method.encodeToUri()
-            .scheme(Const.BLOCTO_URI_SCHEME)
-            .authority(bloctoUriAuthority)
-            .appendPath(Const.BLOCTO_URI_PATH)
-            .appendQueryParameter(Const.KEY_APP_ID, appId)
-            .appendQueryParameter(Const.KEY_REQUEST_ID, requestId)
-            .build()
+        val uri = method.encodeToUri(
+            authority = Const.bloctoAuthority(debug),
+            appId = appId,
+            requestId = requestId
+        ).build()
         val intent = Intent(Intent.ACTION_VIEW, uri).apply {
-            setPackage(bloctoPackage)
+            setPackage(Const.bloctoPackage(debug))
         }
         try {
             context.startActivity(intent)
@@ -53,6 +51,7 @@ object BloctoSDK {
         if (handleError(method, uri)) return
         when (method) {
             is RequestAccountMethod -> handleRequestAccount(method, uri)
+            is SignAndSendTransactionMethod -> handleSignAndSendTransaction(method, uri)
         }
     }
 
@@ -63,6 +62,15 @@ object BloctoSDK {
             return
         }
         method.onSuccess(address)
+    }
+
+    private fun handleSignAndSendTransaction(method: SignAndSendTransactionMethod, uri: Uri) {
+        val txHash = uri.getQueryParameter(Const.KEY_TX_HASH)
+        if (txHash.isNullOrEmpty()) {
+            method.onError(BloctoSDKError.INVALID_RESPONSE)
+            return
+        }
+        method.onSuccess(txHash)
     }
 
     private fun handleError(method: Method<*>, uri: Uri): Boolean {
