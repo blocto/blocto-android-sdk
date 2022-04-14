@@ -8,10 +8,8 @@ import org.near.borshj.BorshBuffer
 
 object ValueProgram : Program() {
 
-    val PROGRAM_ID =
-        PublicKey(pubkeyString = "G4YkbRN4nFQGEUg4SXzPsrManWzuk8bNq9JaMhXepnZ6")
-    val ACCOUNT_PUBLIC_KEY =
-        PublicKey(pubkeyString = "4AXy5YYCXpMapaVuzKkz25kVHzrdLDgKN3TiQvtf1Eu8")
+    val PROGRAM_ID = PublicKey("G4YkbRN4nFQGEUg4SXzPsrManWzuk8bNq9JaMhXepnZ6")
+    val ACCOUNT_PUBLIC_KEY = PublicKey("4AXy5YYCXpMapaVuzKkz25kVHzrdLDgKN3TiQvtf1Eu8")
 
     private const val INSTRUCTION_SET_VALUE = 0
 

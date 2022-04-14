@@ -7,11 +7,11 @@ import com.portto.sdk.core.Const
 import org.json.JSONObject
 
 class SignAndSendTransactionMethod(
-    private val fromAddress: String,
-    private val message: String,
-    private val isInvokeWrapped: Boolean,
-    private val publicKeySignaturePairs: Map<String, String>? = null,
-    private val appendTx: Map<String, String>? = null,
+    val fromAddress: String,
+    val message: String,
+    val isInvokeWrapped: Boolean,
+    val publicKeySignaturePairs: Map<String, String>? = null,
+    val appendTx: Map<String, String>? = null,
     blockchain: Blockchain,
     onSuccess: (String) -> Unit,
     onError: (BloctoSDKError) -> Unit

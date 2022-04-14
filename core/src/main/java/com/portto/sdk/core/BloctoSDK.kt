@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.annotation.VisibleForTesting
 import com.portto.sdk.core.method.Method
 import com.portto.sdk.core.method.RequestAccountMethod
 import com.portto.sdk.core.method.SignAndSendTransactionMethod
@@ -79,5 +80,11 @@ object BloctoSDK {
             ?: BloctoSDKError.UNEXPECTED_ERROR
         method.onError(error)
         return true
+    }
+
+    @VisibleForTesting
+    fun resetForTesting() {
+        appId = null
+        debug = false
     }
 }

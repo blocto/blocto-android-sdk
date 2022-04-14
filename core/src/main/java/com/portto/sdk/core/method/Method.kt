@@ -11,7 +11,7 @@ sealed class Method<T>(
     val onError: (BloctoSDKError) -> Unit
 ) {
 
-    protected abstract val name: String
+    abstract val name: String
 
     open fun encodeToUri(authority: String, appId: String, requestId: String): Uri.Builder {
         return Uri.Builder()

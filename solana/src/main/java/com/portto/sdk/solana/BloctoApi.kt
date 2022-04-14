@@ -15,7 +15,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
 
 @WorkerThread
-internal class BloctoApi {
+class BloctoApi {
 
     private val jsonType = "application/json; charset=utf-8".toMediaType()
 
@@ -60,7 +60,7 @@ internal class BloctoApi {
 }
 
 @Serializable
-internal data class SolanaRawTxRequest(
+data class SolanaRawTxRequest(
     @SerialName("sol_address")
     val address: String,
     @SerialName("raw_tx")
@@ -68,7 +68,7 @@ internal data class SolanaRawTxRequest(
 )
 
 @Serializable
-internal data class SolanaRawTxResponse(
+data class SolanaRawTxResponse(
     @SerialName("raw_tx")
     val rawTx: String,
     @SerialName("extra_data")

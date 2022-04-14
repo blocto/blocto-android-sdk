@@ -11,11 +11,9 @@ import com.portto.solana.web3.Transaction
 import com.portto.solana.web3.TransactionInstruction
 import org.komputing.kbase58.decodeBase58
 
-val BloctoSDK.solana by lazy { Solana() }
+val BloctoSDK.solana by lazy { Solana(BloctoApi()) }
 
-class Solana : Chain, Account {
-
-    private val api by lazy { BloctoApi() }
+class Solana(private val api: BloctoApi) : Chain, Account {
 
     private val walletProgramId = if (BloctoSDK.debug) {
         "Ckv4czD7qPmQvy2duKEa45WRp3ybD2XuaJzQAWrhAour"
@@ -62,8 +60,8 @@ class Solana : Chain, Account {
             fromAddress = fromAddress,
             message = transaction.serializeMessage().toHexString(),
             isInvokeWrapped = isInvokeWrapped,
-            publicKeySignaturePairs = publicKeySignaturePairs,
-            appendTx = appendTx,
+            publicKeySignaturePairs = publicKeySignaturePairs.takeIf { it.isNotEmpty() },
+            appendTx = appendTx?.takeIf { it.isNotEmpty() },
             blockchain = blockchain,
             onSuccess = onSuccess,
             onError = onError

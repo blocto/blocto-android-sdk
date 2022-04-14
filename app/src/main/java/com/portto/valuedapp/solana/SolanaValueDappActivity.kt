@@ -183,7 +183,7 @@ class SolanaValueDappActivity : AppCompatActivity() {
                 context = this@SolanaValueDappActivity,
                 fromAddress = address,
                 transaction = programWallet.transaction,
-                appendTx = programWallet.appendTx.takeIf { it.isNotEmpty() },
+                appendTx = programWallet.appendTx,
                 onSuccess = {
                     binding.partialSignButton.hideLoading(getString(R.string.button_send_transaction))
                     with(binding.partialSignTxHash) {

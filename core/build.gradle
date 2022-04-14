@@ -34,4 +34,8 @@ android {
 dependencies {
     implementation "androidx.core:core-ktx:$versions.androidx_core"
     implementation "androidx.appcompat:appcompat:$versions.androidx_appcompat"
+
+    testImplementation "junit:junit:$versions.junit"
+    testImplementation "io.mockk:mockk:$versions.mockk"
+    testImplementation "org.robolectric:robolectric:$versions.robolectric"
 }
