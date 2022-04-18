@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -33,9 +34,19 @@ class BloctoApi {
         }
     }
 
+    private val headerInterceptor = Interceptor { chain ->
+        val request = chain.request()
+        val builder = request.newBuilder().apply {
+            addHeader("blocto-sdk-platform", "Android")
+            addHeader("blocto-sdk-version", BuildConfig.VERSION_NAME)
+        }.build()
+        chain.proceed(builder)
+    }
+
     private val client = OkHttpClient.Builder()
         .connectTimeout(10L, TimeUnit.SECONDS)
         .readTimeout(10L, TimeUnit.SECONDS)
+        .addInterceptor(headerInterceptor)
         .addInterceptor(loggingInterceptor)
         .build()
 
