@@ -15,14 +15,17 @@ object BloctoSDK {
     private var appId: String? = null
     private val requestMap = mutableMapOf<String, Method<*>>()
 
+    @JvmStatic
     var debug: Boolean = false
         private set
 
+    @JvmStatic
     fun init(appId: String, debug: Boolean = false) {
         this.appId = appId
         this.debug = debug
     }
 
+    @JvmStatic
     fun send(context: Context, method: Method<*>) {
         val appId = this.appId.takeIf { !it.isNullOrEmpty() } ?: kotlin.run {
             throw NullPointerException("Need to set app id before use Blocto SDK")
@@ -44,6 +47,7 @@ object BloctoSDK {
         }
     }
 
+    @JvmStatic
     fun handleCallback(uri: Uri?) {
         if (uri == null) return
         val requestId = uri.getQueryParameter(Const.KEY_REQUEST_ID)

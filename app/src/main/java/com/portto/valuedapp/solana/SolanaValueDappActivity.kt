@@ -1,5 +1,7 @@
 package com.portto.valuedapp.solana
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Base64
 import androidx.appcompat.app.AppCompatActivity
@@ -69,6 +71,16 @@ class SolanaValueDappActivity : AppCompatActivity() {
             it.hideKeyboard()
             getValue()
         }
+
+        binding.setValueTxHash.setOnClickListener {
+            val txHash = binding.setValueTxHash.text.toString()
+            openExplorer(txHash)
+        }
+
+        binding.partialSignTxHash.setOnClickListener {
+            val txHash = binding.partialSignTxHash.text.toString()
+            openExplorer(txHash)
+        }
     }
 
     private fun requestAccount() {
@@ -123,7 +135,7 @@ class SolanaValueDappActivity : AppCompatActivity() {
                 onSuccess = {
                     binding.setValueButton.hideLoading(getString(R.string.button_send_transaction))
                     with(binding.setValueTxHash) {
-                        text = getString(R.string.tx_hash, it)
+                        text = it
                         isVisible = true
                     }
                 },
@@ -187,7 +199,7 @@ class SolanaValueDappActivity : AppCompatActivity() {
                 onSuccess = {
                     binding.partialSignButton.hideLoading(getString(R.string.button_send_transaction))
                     with(binding.partialSignTxHash) {
-                        text = getString(R.string.tx_hash, it)
+                        text = it
                         isVisible = true
                     }
                 },
@@ -251,5 +263,19 @@ class SolanaValueDappActivity : AppCompatActivity() {
     private fun showError(message: String?) {
         val msg = message ?: "unexpected error"
         Snackbar.make(binding.container, msg, Snackbar.LENGTH_SHORT).show()
+    }
+
+    private fun openExplorer(txHash: String) {
+        val uri = Uri.Builder()
+            .scheme("https")
+            .authority("explorer.solana.com")
+            .path("tx/$txHash")
+            .apply {
+                if (BloctoSDK.debug) {
+                    appendQueryParameter("cluster", "devnet")
+                }
+            }
+            .build()
+        startActivity(Intent(Intent.ACTION_VIEW, uri))
     }
 }

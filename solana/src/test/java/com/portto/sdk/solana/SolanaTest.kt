@@ -42,13 +42,13 @@ class SolanaTest {
 
     @Before
     fun setUp() {
-        mockkObject(BloctoSDK)
+        mockkStatic(BloctoSDK::class)
         BloctoSDK.init(appId = appId, debug = true)
     }
 
     @After
     fun tearDown() {
-        unmockkObject(BloctoSDK)
+        unmockkStatic(BloctoSDK::class)
         BloctoSDK.resetForTesting()
     }
 

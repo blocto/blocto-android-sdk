@@ -68,9 +68,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:drawableEnd="@drawable/ic_open"
+                android:drawablePadding="4dp"
+                android:ellipsize="middle"
+                android:gravity="center_vertical"
+                android:singleLine="true"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                android:visibility="gone" />
+                android:visibility="gone"
+                tools:text="4yXp3W1bz3V8cynyd8rwda81dEvgpCZ5vnSRw5PKjfsoVCGJi1jmDRsMn5haX8knr292XDkZ18pxcXs8kiG1YyKV"
+                tools:visibility="visible" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/set_value_button"
@@ -100,9 +108,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:drawableEnd="@drawable/ic_open"
+                android:drawablePadding="4dp"
+                android:ellipsize="middle"
+                android:gravity="center_vertical"
+                android:singleLine="true"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                android:visibility="gone" />
+                android:visibility="gone"
+                tools:text="4yXp3W1bz3V8cynyd8rwda81dEvgpCZ5vnSRw5PKjfsoVCGJi1jmDRsMn5haX8knr292XDkZ18pxcXs8kiG1YyKV"
+                tools:visibility="visible" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/partial_sign_button"
