@@ -1,10 +1,10 @@
 package com.portto.valuedapp
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.portto.sdk.core.BloctoSDK
-import com.portto.sdk.solana.solana
 import com.portto.valuedapp.databinding.ActivityMainBinding
+import com.portto.valuedapp.solana.SolanaValueDappActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -15,18 +15,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        BloctoSDK.init(appId = "your app id")
-
-        binding.button.setOnClickListener {
-            BloctoSDK.solana.requestAccount(
-                context = this,
-                onSuccess = {
-                    binding.text.text = "address: $it"
-                },
-                onError = {
-                    binding.text.text = "error: $it"
-                }
-            )
+        binding.solanaDapp.setOnClickListener {
+            startActivity(Intent(this, SolanaValueDappActivity::class.java))
         }
     }
 }

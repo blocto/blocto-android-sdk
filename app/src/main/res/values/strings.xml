@@ -1,3 +1,10 @@
 <resources>
-    <string name="app_name">BloctoSDK</string>
+    <string name="app_name">BloctoSDK Example</string>
+    <string name="solana_dapp_name">Solana Value Dapp</string>
+    <string name="button_connect">Connect</string>
+    <string name="button_send_transaction">Send Transaction</string>
+    <string name="button_get_value">Get Value</string>
+    <string name="title_set_value">Set Value</string>
+    <string name="title_get_value">Value: </string>
+    <string name="title_partial_sign">Create Account and Set Value (PartialSign)</string>
 </resources>

@@ -28,10 +28,15 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+        freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
     }
 }
 
 dependencies {
     implementation "androidx.core:core-ktx:$versions.androidx_core"
     implementation "androidx.appcompat:appcompat:$versions.androidx_appcompat"
+
+    testImplementation "junit:junit:$versions.junit"
+    testImplementation "io.mockk:mockk:$versions.mockk"
+    testImplementation "org.robolectric:robolectric:$versions.robolectric"
 }
