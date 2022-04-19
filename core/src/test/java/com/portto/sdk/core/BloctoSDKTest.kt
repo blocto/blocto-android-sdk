@@ -5,6 +5,8 @@ import android.content.Intent
 import android.net.Uri
 import com.portto.sdk.core.method.RequestAccountMethod
 import com.portto.sdk.core.method.SignAndSendTransactionMethod
+import com.portto.sdk.wallet.BloctoSDKError
+import com.portto.sdk.wallet.Const
 import io.mockk.*
 import org.json.JSONObject
 import org.junit.After
