@@ -116,15 +116,12 @@ class SolanaTest {
             add(setValueInstruction(PublicKey(solAddress)))
         }
 
-        val programWallet = solana.convertToProgramWalletTransaction(solAddress, transaction)
-        val newTransaction = programWallet.transaction
-        val appendTx = programWallet.appendTx
+        val newTransaction = solana.convertToProgramWalletTransaction(solAddress, transaction)
 
         solana.signAndSendTransaction(
             context = context,
             fromAddress = solAddress,
             transaction = newTransaction,
-            appendTx = appendTx,
             onSuccess = {},
             onError = {}
         )
@@ -136,7 +133,6 @@ class SolanaTest {
         assertEquals(newTransaction.serializeMessage().toHexString(), methodSlot.captured.message)
         assertEquals(true, methodSlot.captured.isInvokeWrapped)
         assertEquals(null, methodSlot.captured.publicKeySignaturePairs)
-        assertEquals(null, methodSlot.captured.appendTx)
     }
 
     private fun createTransaction(): Transaction {

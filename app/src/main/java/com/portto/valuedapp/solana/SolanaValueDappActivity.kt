@@ -10,7 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.portto.sdk.core.BloctoSDK
 import com.portto.sdk.core.BloctoSDKError
-import com.portto.sdk.solana.ProgramWallet
 import com.portto.sdk.solana.solana
 import com.portto.solana.web3.Connection
 import com.portto.solana.web3.KeyPair
@@ -188,14 +187,13 @@ class SolanaValueDappActivity : AppCompatActivity() {
             )
             transaction.add(createAccountInstruction)
 
-            val programWallet = convertToProgramWalletTransaction(address, transaction)
-            programWallet.transaction.partialSign(newAccount)
+            val newTransaction = convertToProgramWalletTransaction(address, transaction)
+            newTransaction.partialSign(newAccount)
 
             BloctoSDK.solana.signAndSendTransaction(
                 context = this@SolanaValueDappActivity,
                 fromAddress = address,
-                transaction = programWallet.transaction,
-                appendTx = programWallet.appendTx,
+                transaction = newTransaction,
                 onSuccess = {
                     binding.partialSignButton.hideLoading(getString(R.string.button_send_transaction))
                     with(binding.partialSignTxHash) {
@@ -251,7 +249,7 @@ class SolanaValueDappActivity : AppCompatActivity() {
     private suspend fun convertToProgramWalletTransaction(
         address: String,
         transaction: Transaction
-    ): ProgramWallet = withContext(Dispatchers.Default) {
+    ): Transaction = withContext(Dispatchers.Default) {
         return@withContext BloctoSDK.solana.convertToProgramWalletTransaction(address, transaction)
     }
 

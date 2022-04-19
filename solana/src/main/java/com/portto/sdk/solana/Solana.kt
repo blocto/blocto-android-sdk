@@ -21,6 +21,8 @@ class Solana(private val api: BloctoApi) : Chain, Account {
         "JBn9VwAiqpizWieotzn6FjEXrBu4fDe2XFjiFqZwp8Am"
     }
 
+    private var appendTxs = mutableMapOf<String, Map<String, String>>()
+
     override val blockchain: Blockchain
         get() = Blockchain.SOLANA
 
@@ -41,7 +43,6 @@ class Solana(private val api: BloctoApi) : Chain, Account {
         context: Context,
         fromAddress: String,
         transaction: Transaction,
-        appendTx: Map<String, String>? = null,
         onSuccess: (String) -> Unit,
         onError: (BloctoSDKError) -> Unit
     ) {
@@ -56,29 +57,32 @@ class Solana(private val api: BloctoApi) : Chain, Account {
             it.programId.toBase58() == walletProgramId
         }
 
+        val message = transaction.serializeMessage().toHexString()
+
         val method = SignAndSendTransactionMethod(
             fromAddress = fromAddress,
-            message = transaction.serializeMessage().toHexString(),
+            message = message,
             isInvokeWrapped = isInvokeWrapped,
             publicKeySignaturePairs = publicKeySignaturePairs.takeIf { it.isNotEmpty() },
-            appendTx = appendTx?.takeIf { it.isNotEmpty() },
+            appendTx = appendTxs[message]?.takeIf { it.isNotEmpty() },
             blockchain = blockchain,
             onSuccess = onSuccess,
             onError = onError
         )
         BloctoSDK.send(context, method)
+        appendTxs.remove(message)
     }
 
     @WorkerThread
     fun convertToProgramWalletTransaction(
         address: String,
         transaction: Transaction
-    ): ProgramWallet {
+    ): Transaction {
         val rawTx = transaction.serializeMessage().toHexString()
         val request = SolanaRawTxRequest(address, rawTx)
         val response = api.createRawTransaction(request)
         val message = Message.from(response.rawTx.decodeHex())
-        val newTransaction = Transaction().apply {
+        return Transaction().apply {
             this.recentBlockhash = message.recentBlockhash
 
             if (message.header.numRequiredSignatures > 0) {
@@ -101,12 +105,8 @@ class Solana(private val api: BloctoApi) : Chain, Account {
                     )
                 )
             }
+        }.also {
+            appendTxs[it.serializeMessage().toHexString()] = response.extraData.appendTx
         }
-        return ProgramWallet(newTransaction, response.extraData.appendTx)
     }
 }
-
-data class ProgramWallet(
-    val transaction: Transaction,
-    val appendTx: Map<String, String>
-)
