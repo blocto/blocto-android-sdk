@@ -4,6 +4,7 @@ plugins {
 }
 
 apply from: "$rootDir/dependencies.gradle"
+apply from: "$rootDir/maven-publish.gradle"
 
 android {
     compileSdk versions.compileSdk

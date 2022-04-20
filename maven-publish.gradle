@@ -1,0 +1,21 @@
+apply plugin: "com.vanniktech.maven.publish"
+apply plugin: "maven-publish"
+apply plugin: "signing"
+
+version = versions.versionName
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.sourceFiles
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+signing {
+//    sign configurations.archives
+}
+
+mavenPublish {
+    releaseSigningEnabled = true
+}
