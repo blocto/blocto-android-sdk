@@ -233,7 +233,7 @@ class SolanaValueDappActivity : AppCompatActivity() {
     }
 
     private suspend fun getLatestBlockhash(): String? = withContext(Dispatchers.Default) {
-        return@withContext connection.getLatestBlockhash()
+        connection.getLatestBlockhash()
     }
 
     private suspend fun getMinimumBalanceForRentExemption(
@@ -250,7 +250,7 @@ class SolanaValueDappActivity : AppCompatActivity() {
         address: String,
         transaction: Transaction
     ): Transaction = withContext(Dispatchers.Default) {
-        return@withContext BloctoSDK.solana.convertToProgramWalletTransaction(address, transaction)
+        BloctoSDK.solana.convertToProgramWalletTransaction(address, transaction)
     }
 
     private fun showError(error: BloctoSDKError) {
