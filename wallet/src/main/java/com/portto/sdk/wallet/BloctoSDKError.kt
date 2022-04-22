@@ -1,4 +1,4 @@
-package com.portto.sdk.core
+package com.portto.sdk.wallet
 
 enum class BloctoSDKError(val message: String) {
     USER_REJECTED("user_rejected"),

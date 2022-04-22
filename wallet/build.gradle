@@ -1,19 +1,21 @@
 plugins {
-    id 'com.android.application'
+    id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlinx-serialization'
 }
 
 apply from: "$rootDir/dependencies.gradle"
+apply from: "$rootDir/maven-publish.gradle"
 
 android {
     compileSdk versions.compileSdk
 
     defaultConfig {
-        applicationId "com.portto.valuedapp"
         minSdk versions.minSdk
         targetSdk versions.compileSdk
         versionCode versions.versionCode
         versionName versions.versionName
+        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
@@ -29,19 +31,9 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    buildFeatures {
-        viewBinding true
-    }
 }
 
 dependencies {
-    implementation project(':solana')
     implementation "androidx.core:core-ktx:$versions.androidx_core"
-    implementation "androidx.appcompat:appcompat:$versions.androidx_appcompat"
-    implementation "com.google.android.material:material:$versions.material"
-    implementation "androidx.constraintlayout:constraintlayout:$versions.constraintlayout"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$versions.androidx_runtime"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutine"
-    implementation "com.github.razir.progressbutton:progressbutton:2.1.0"
-    implementation "com.portto.solana:web3:$versions.solana_web3"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$versions.serialization"
 }

@@ -4,6 +4,7 @@ plugins {
 }
 
 apply from: "$rootDir/dependencies.gradle"
+apply from: "$rootDir/maven-publish.gradle"
 
 android {
     compileSdk versions.compileSdk
@@ -33,6 +34,7 @@ android {
 }
 
 dependencies {
+    api project(':wallet')
     implementation "androidx.core:core-ktx:$versions.androidx_core"
     implementation "androidx.appcompat:appcompat:$versions.androidx_appcompat"
 

@@ -2,8 +2,8 @@ package com.portto.sdk.core.method
 
 import android.net.Uri
 import com.portto.sdk.core.Blockchain
-import com.portto.sdk.core.BloctoSDKError
-import com.portto.sdk.core.Const
+import com.portto.sdk.wallet.BloctoSDKError
+import com.portto.sdk.wallet.Const
 import org.json.JSONObject
 
 class SignAndSendTransactionMethod(

@@ -8,6 +8,8 @@ import androidx.annotation.VisibleForTesting
 import com.portto.sdk.core.method.Method
 import com.portto.sdk.core.method.RequestAccountMethod
 import com.portto.sdk.core.method.SignAndSendTransactionMethod
+import com.portto.sdk.wallet.BloctoSDKError
+import com.portto.sdk.wallet.Const
 import java.util.*
 
 object BloctoSDK {

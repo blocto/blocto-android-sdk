@@ -9,8 +9,8 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.portto.sdk.core.BloctoSDK
-import com.portto.sdk.core.BloctoSDKError
 import com.portto.sdk.solana.solana
+import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.solana.web3.Connection
 import com.portto.solana.web3.KeyPair
 import com.portto.solana.web3.PublicKey
@@ -233,7 +233,7 @@ class SolanaValueDappActivity : AppCompatActivity() {
     }
 
     private suspend fun getLatestBlockhash(): String? = withContext(Dispatchers.Default) {
-        return@withContext connection.getLatestBlockhash()
+        connection.getLatestBlockhash()
     }
 
     private suspend fun getMinimumBalanceForRentExemption(
@@ -250,7 +250,7 @@ class SolanaValueDappActivity : AppCompatActivity() {
         address: String,
         transaction: Transaction
     ): Transaction = withContext(Dispatchers.Default) {
-        return@withContext BloctoSDK.solana.convertToProgramWalletTransaction(address, transaction)
+        BloctoSDK.solana.convertToProgramWalletTransaction(address, transaction)
     }
 
     private fun showError(error: BloctoSDKError) {

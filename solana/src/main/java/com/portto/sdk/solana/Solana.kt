@@ -5,6 +5,7 @@ import androidx.annotation.WorkerThread
 import com.portto.sdk.core.*
 import com.portto.sdk.core.method.RequestAccountMethod
 import com.portto.sdk.core.method.SignAndSendTransactionMethod
+import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.solana.web3.AccountMeta
 import com.portto.solana.web3.Message
 import com.portto.solana.web3.Transaction

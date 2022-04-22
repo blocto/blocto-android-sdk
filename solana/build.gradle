@@ -5,6 +5,7 @@ plugins {
 }
 
 apply from: "$rootDir/dependencies.gradle"
+apply from: "$rootDir/maven-publish.gradle"
 
 android {
     compileSdk versions.compileSdk
@@ -35,12 +36,12 @@ android {
 
 dependencies {
     api project(':core')
-    api "com.portto.solana:web3:$versions.solana_web3"
     implementation "androidx.core:core-ktx:$versions.androidx_core"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$versions.serialization"
     implementation "com.squareup.okhttp3:okhttp:$versions.okhttp"
     implementation "com.squareup.okhttp3:logging-interceptor:$versions.okhttp"
     implementation "com.github.komputing:KBase58:$versions.kbase58"
+    implementation "com.portto.solana:web3:$versions.solana_web3"
 
     testImplementation "junit:junit:$versions.junit"
     testImplementation "io.mockk:mockk:$versions.mockk"

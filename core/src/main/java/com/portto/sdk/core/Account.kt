@@ -1,6 +1,7 @@
 package com.portto.sdk.core
 
 import android.content.Context
+import com.portto.sdk.wallet.BloctoSDKError
 
 interface Account {
     fun requestAccount(
