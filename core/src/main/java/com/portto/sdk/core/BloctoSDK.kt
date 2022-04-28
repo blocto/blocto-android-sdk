@@ -45,7 +45,12 @@ object BloctoSDK {
         try {
             context.startActivity(intent)
         } catch (e: ActivityNotFoundException) {
-            TODO("handle request using browser")
+            val url = method.encodeToUri(
+                authority = Const.webSDKUrl(debug),
+                appId = appId,
+                requestId = requestId
+            ).build().toString()
+            context.startActivity(WebSDKActivity.newIntent(context, url))
         }
     }
 

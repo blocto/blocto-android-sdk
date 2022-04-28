@@ -1,9 +1,7 @@
 package com.portto.sdk.wallet
 
 import android.net.Uri
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
+import org.json.JSONObject
 
 object RequestUriParser {
 
@@ -32,12 +30,21 @@ object RequestUriParser {
                 }
 
                 val isInvokeWrapped = uri.getQueryParameter(Const.KEY_IS_INVOKE_WRAPPED)?.toBoolean() ?: false
-                val publicKeySignaturePairs = uri.getQueryParameter(Const.KEY_PUBLIC_KEY_SIGNATURE_PAIRS)
-                val appendTx = uri.getQueryParameter(Const.KEY_APPEND_TX)?.let { appendTx ->
-                    Json.parseToJsonElement(appendTx).jsonObject.mapValues {
-                        it.value.jsonPrimitive.content
+
+                val publicKeySignaturePairs = uri.queryParameterNames
+                    .filter { it.startsWith(Const.KEY_PUBLIC_KEY_SIGNATURE_PAIRS) }
+                    .associate {
+                        val publicKey = it.substringAfter("[").substringBefore("]")
+                        publicKey to (uri.getQueryParameter(it) ?: "")
                     }
-                }
+
+                val appendTx = uri.queryParameterNames
+                    .filter { it.startsWith(Const.KEY_APPEND_TX) }
+                    .associate {
+                        val hash = it.substringAfter("[").substringBefore("]")
+                        hash to (uri.getQueryParameter(it) ?: "")
+                    }
+
                 return ParseResult.SignAndSendTransaction(
                     appId = appId,
                     requestId = requestId,
@@ -45,7 +52,7 @@ object RequestUriParser {
                     fromAddress = fromAddress,
                     message = message,
                     isInvokeWrapped = isInvokeWrapped,
-                    publicKeySignaturePairs = publicKeySignaturePairs,
+                    publicKeySignaturePairs = JSONObject(publicKeySignaturePairs).toString(),
                     appendTx = appendTx
                 )
             }

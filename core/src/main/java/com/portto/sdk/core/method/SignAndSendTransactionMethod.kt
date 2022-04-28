@@ -4,7 +4,6 @@ import android.net.Uri
 import com.portto.sdk.core.Blockchain
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.Const
-import org.json.JSONObject
 
 class SignAndSendTransactionMethod(
     val fromAddress: String,
@@ -26,16 +25,16 @@ class SignAndSendTransactionMethod(
             .appendQueryParameter(Const.KEY_MESSAGE, message)
             .appendQueryParameter(Const.KEY_IS_INVOKE_WRAPPED, isInvokeWrapped.toString())
             .apply {
-                publicKeySignaturePairs?.let {
+                publicKeySignaturePairs?.entries?.forEach { (publicKey, signature) ->
                     appendQueryParameter(
-                        Const.KEY_PUBLIC_KEY_SIGNATURE_PAIRS,
-                        JSONObject(it).toString()
+                        "${Const.KEY_PUBLIC_KEY_SIGNATURE_PAIRS}[$publicKey]",
+                        signature
                     )
                 }
-                appendTx?.let {
+                appendTx?.entries?.forEach { (hash, message) ->
                     appendQueryParameter(
-                        Const.KEY_APPEND_TX,
-                        JSONObject(it).toString()
+                        "${Const.KEY_APPEND_TX}[$hash]",
+                        message
                     )
                 }
             }

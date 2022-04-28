@@ -8,7 +8,6 @@ import com.portto.sdk.core.method.SignAndSendTransactionMethod
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.Const
 import io.mockk.*
-import org.json.JSONObject
 import org.junit.After
 import org.junit.AfterClass
 import org.junit.Assert.assertEquals
@@ -203,23 +202,23 @@ class BloctoSDKTest {
         )
         assertEquals(
             publicKeySignaturePairs,
-            capturedData?.getQueryParameter(Const.KEY_PUBLIC_KEY_SIGNATURE_PAIRS)?.let {
-                JSONObject(it).toStringMap()
-            }
+            capturedData
+                ?.queryParameterNames
+                ?.filter { it.startsWith(Const.KEY_PUBLIC_KEY_SIGNATURE_PAIRS) }
+                ?.associate {
+                    val publicKey = it.substringAfter("[").substringBefore("]")
+                    publicKey to (capturedData.getQueryParameter(it) ?: "")
+                }
         )
         assertEquals(
             appendTx,
-            capturedData?.getQueryParameter(Const.KEY_APPEND_TX)?.let {
-                JSONObject(it).toStringMap()
-            }
+            capturedData
+                ?.queryParameterNames
+                ?.filter { it.startsWith(Const.KEY_APPEND_TX) }
+                ?.associate {
+                    val hash = it.substringAfter("[").substringBefore("]")
+                    hash to (capturedData.getQueryParameter(it) ?: "")
+                }
         )
-    }
-
-    private fun JSONObject.toStringMap(): Map<String, String> {
-        val map = mutableMapOf<String, String>()
-        this.keys().forEach { key ->
-            map[key] = this.getString(key)
-        }
-        return map
     }
 }
