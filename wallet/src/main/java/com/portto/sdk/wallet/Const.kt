@@ -8,6 +8,9 @@ object Const {
     private const val BLOCTO_URI_AUTHORITY = "blocto.app"
     private const val BLOCTO_URI_AUTHORITY_DEBUG = "staging.blocto.app"
 
+    private const val WEB_SDK_URL = "wallet.blocto.app"
+    private const val WEB_SDK_URL_DEBUG = "wallet-testnet.blocto.app"
+
     const val HTTPS_SCHEME = "https"
     const val BLOCTO_SCHEME = "blocto"
     const val BLOCTO_URI_PATH = "sdk"
@@ -35,5 +38,11 @@ object Const {
         BLOCTO_PACKAGE_DEBUG
     } else {
         BLOCTO_PACKAGE
+    }
+
+    fun webSDKUrl(debug: Boolean): String = if (debug) {
+        WEB_SDK_URL_DEBUG
+    } else {
+        WEB_SDK_URL
     }
 }

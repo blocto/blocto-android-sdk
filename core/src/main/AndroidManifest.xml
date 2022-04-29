@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.portto.sdk.core">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application>
         <activity
             android:name=".CallbackActivity"
@@ -17,5 +19,9 @@
                 <data android:scheme="blocto" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".WebSDKActivity"
+            android:theme="@style/Theme.Browser" />
     </application>
 </manifest>
