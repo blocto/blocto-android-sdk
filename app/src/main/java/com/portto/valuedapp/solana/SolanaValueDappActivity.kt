@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Base64
+import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
@@ -29,8 +30,21 @@ import org.near.borshj.BorshBuffer
 
 class SolanaValueDappActivity : AppCompatActivity() {
 
+    private val envs = listOf(
+        Env(
+            name = "Mainnet Beta",
+            cluster = Cluster.MAINNET_BETA,
+            appId = "0896e44c-20fd-443b-b664-d305b52fe8e8"
+        ),
+        Env(
+            name = "Devnet",
+            cluster = Cluster.DEVNET,
+            appId = "57f397df-263c-4e97-b61f-15b67b9ce285"
+        )
+    )
+
     private lateinit var binding: ActivitySolanaValueDappBinding
-    private val connection by lazy { Connection(Cluster.DEVNET) }
+    private lateinit var connection: Connection
     private var currentAddress: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,10 +52,22 @@ class SolanaValueDappActivity : AppCompatActivity() {
         binding = ActivitySolanaValueDappBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        BloctoSDK.init(appId = "57f397df-263c-4e97-b61f-15b67b9ce285", debug = true)
+        val defaultEnv = envs.first()
+        setEnv(defaultEnv)
 
         binding.toolbar.setNavigationOnClickListener {
             onBackPressed()
+        }
+
+        val adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_list_item_1,
+            envs.map { it.name }
+        )
+        binding.dropdown.setAdapter(adapter)
+        binding.dropdown.setText(defaultEnv.name, false)
+        binding.dropdown.setOnItemClickListener { _, _, position, _ ->
+            setEnv(envs[position])
         }
 
         binding.valueInput.textChanges()
@@ -80,6 +106,17 @@ class SolanaValueDappActivity : AppCompatActivity() {
             val txHash = binding.partialSignTxHash.text.toString()
             openExplorer(txHash)
         }
+    }
+
+    private fun setEnv(env: Env) {
+        BloctoSDK.init(appId = env.appId, debug = env.cluster == Cluster.DEVNET)
+        connection = Connection(env.cluster)
+        currentAddress = null
+        binding.connectButton.text = getString(R.string.button_connect)
+        binding.valueInput.text = null
+        binding.setValueTxHash.isVisible = false
+        binding.partialSignTxHash.isVisible = false
+        binding.value.text = ""
     }
 
     private fun requestAccount() {
@@ -183,7 +220,7 @@ class SolanaValueDappActivity : AppCompatActivity() {
                 newAccountPublicKey = newAccount.publicKey,
                 lamports = getMinimumBalanceForRentExemption(10),
                 space = 10,
-                programId = ValueProgram.PROGRAM_ID
+                programId = ValueProgram.programId
             )
             transaction.add(createAccountInstruction)
 
@@ -218,7 +255,7 @@ class SolanaValueDappActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch(exceptionHandler) {
-            val accountInfo = getAccountInfo(ValueProgram.ACCOUNT_PUBLIC_KEY)
+            val accountInfo = getAccountInfo(ValueProgram.accountPublicKey)
                 ?: throw Throwable("cannot find the account")
             val data = accountInfo.data.firstOrNull() ?: throw Throwable("empty data")
             val byteArray = Base64.decode(data, Base64.DEFAULT)
@@ -277,3 +314,9 @@ class SolanaValueDappActivity : AppCompatActivity() {
         startActivity(Intent(Intent.ACTION_VIEW, uri))
     }
 }
+
+data class Env(
+    val name: String,
+    val cluster: Cluster,
+    val appId: String
+)

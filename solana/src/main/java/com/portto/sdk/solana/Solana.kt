@@ -16,7 +16,7 @@ val BloctoSDK.solana by lazy { Solana(BloctoApi()) }
 
 class Solana(private val api: BloctoApi) : Chain, Account {
 
-    private val walletProgramId = if (BloctoSDK.debug) {
+    private val walletProgramId get() = if (BloctoSDK.debug) {
         "Ckv4czD7qPmQvy2duKEa45WRp3ybD2XuaJzQAWrhAour"
     } else {
         "JBn9VwAiqpizWieotzn6FjEXrBu4fDe2XFjiFqZwp8Am"
