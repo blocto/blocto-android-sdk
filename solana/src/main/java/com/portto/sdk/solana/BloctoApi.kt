@@ -20,7 +20,7 @@ class BloctoApi {
 
     private val jsonType = "application/json; charset=utf-8".toMediaType()
 
-    private val baseUrl: String = if (BloctoSDK.debug) {
+    private val baseUrl get() = if (BloctoSDK.debug) {
         "https://dev-api.blocto.app"
     } else {
         "https://api.blocto.app"
