@@ -30,6 +30,12 @@ import org.near.borshj.BorshBuffer
 
 class SolanaValueDappActivity : AppCompatActivity() {
 
+    private data class Env(
+        val name: String,
+        val cluster: Cluster,
+        val appId: String
+    )
+
     private val envs = listOf(
         Env(
             name = "Mainnet Beta",
@@ -314,9 +320,3 @@ class SolanaValueDappActivity : AppCompatActivity() {
         startActivity(Intent(Intent.ACTION_VIEW, uri))
     }
 }
-
-data class Env(
-    val name: String,
-    val cluster: Cluster,
-    val appId: String
-)
