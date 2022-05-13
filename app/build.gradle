@@ -45,4 +45,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutine"
     implementation "com.github.razir.progressbutton:progressbutton:2.1.0"
     implementation "com.portto.solana:web3:$versions.solana_web3"
+    implementation ("org.web3j:core:4.8.7-android") {
+        exclude module: 'bcprov-jdk15on'
+    }
 }

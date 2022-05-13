@@ -1,5 +1,7 @@
 package com.portto.sdk.wallet
 
+import java.math.BigInteger
+
 sealed class ParseResult {
 
     data class RequestAccount(
@@ -17,6 +19,16 @@ sealed class ParseResult {
         val isInvokeWrapped: Boolean,
         val publicKeySignaturePairs: String? = null,
         val appendTx: Map<String, String>? = null
+    ) : ParseResult()
+
+    data class SendTransaction(
+        val appId: String,
+        val requestId: String,
+        val blockchain: String,
+        val fromAddress: String,
+        val toAddress: String,
+        val data: String,
+        val value: String
     ) : ParseResult()
 
     object Error : ParseResult()

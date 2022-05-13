@@ -8,4 +8,5 @@
     <string name="title_set_value">Set Value</string>
     <string name="title_get_value">Value: </string>
     <string name="title_partial_sign">Create Account and Set Value (PartialSign)</string>
+    <string name="title_donate">Donate</string>
 </resources>

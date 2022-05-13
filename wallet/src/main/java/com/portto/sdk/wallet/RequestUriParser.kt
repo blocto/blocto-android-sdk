@@ -2,6 +2,7 @@ package com.portto.sdk.wallet
 
 import android.net.Uri
 import org.json.JSONObject
+import java.math.BigInteger
 
 object RequestUriParser {
 
@@ -54,6 +55,24 @@ object RequestUriParser {
                     isInvokeWrapped = isInvokeWrapped,
                     publicKeySignaturePairs = JSONObject(publicKeySignaturePairs).toString(),
                     appendTx = appendTx
+                )
+            }
+            "send_transaction" -> {
+                val fromAddress = uri.getQueryParameter(Const.KEY_FROM)
+                val toAddress = uri.getQueryParameter(Const.KEY_TO)
+                val data = uri.getQueryParameter(Const.KEY_DATA)
+                val value = uri.getQueryParameter(Const.KEY_VALUE)
+                if (fromAddress == null || toAddress == null || data == null) {
+                    return ParseResult.Error
+                }
+                return ParseResult.SendTransaction(
+                    appId = appId,
+                    requestId = requestId,
+                    blockchain = blockchain,
+                    fromAddress = fromAddress,
+                    toAddress = toAddress,
+                    data = data,
+                    value = value.orEmpty()
                 )
             }
             else -> return ParseResult.Error
