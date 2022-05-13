@@ -3,7 +3,7 @@ package com.portto.sdk.evm
 import android.content.Context
 import com.portto.sdk.core.BloctoSDK
 import com.portto.sdk.core.Chain
-import com.portto.sdk.core.method.SendTransactionMethod
+import com.portto.sdk.evm.method.SendTransactionMethod
 import com.portto.sdk.wallet.BloctoSDKError
 import java.math.BigInteger
 

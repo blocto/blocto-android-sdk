@@ -1,10 +1,13 @@
 package com.portto.sdk.solana
 
 import android.content.Context
+import android.net.Uri
 import com.portto.sdk.core.BloctoSDK
 import com.portto.sdk.core.method.RequestAccountMethod
-import com.portto.sdk.core.method.SignAndSendTransactionMethod
 import com.portto.sdk.core.toHexString
+import com.portto.sdk.solana.method.SignAndSendTransactionMethod
+import com.portto.sdk.wallet.BloctoSDKError
+import com.portto.sdk.wallet.Const
 import com.portto.solana.web3.AccountMeta
 import com.portto.solana.web3.PublicKey
 import com.portto.solana.web3.Transaction
@@ -58,6 +61,10 @@ class SolanaTest {
     private val solAddress = "zJ9A5VfCFdUsXAxouniMbDPMuj8MrWBosDwoQA3D78j"
     private val programId = PublicKey("G4YkbRN4nFQGEUg4SXzPsrManWzuk8bNq9JaMhXepnZ6")
     private val accountPublicKey = PublicKey("4AXy5YYCXpMapaVuzKkz25kVHzrdLDgKN3TiQvtf1Eu8")
+    private val onSuccess: (String) -> Unit = mockk(relaxed = true)
+    private val onError: (BloctoSDKError) -> Unit = mockk(relaxed = true)
+    private val txHash =
+        "2ZTRtryBTAPkbgALqtX9zi9TuuHCxzPBXDVQicDNRdQ7rSNH9Pb1zvAbKoissLSQ4vUeeNn2FhYegYmCDaQY6Jhw"
 
     @Test
     fun `test request account`() {
@@ -133,6 +140,65 @@ class SolanaTest {
         assertEquals(newTransaction.serializeMessage().toHexString(), methodSlot.captured.message)
         assertEquals(true, methodSlot.captured.isInvokeWrapped)
         assertEquals(null, methodSlot.captured.publicKeySignaturePairs)
+    }
+
+    @Test
+    fun `test sign and send transaction success callback`() {
+        val solana = Solana(api)
+
+        val transaction = createTransaction().apply {
+            add(setValueInstruction(PublicKey(solAddress)))
+        }
+
+        solana.signAndSendTransaction(
+            context = context,
+            fromAddress = solAddress,
+            transaction = transaction,
+            onSuccess = onSuccess,
+            onError = onError
+        )
+
+        val successCallbackUri = Uri.Builder()
+            .scheme(Const.BLOCTO_SCHEME)
+            .appendQueryParameter(Const.KEY_REQUEST_ID, requestId)
+            .appendQueryParameter(Const.KEY_TX_HASH, txHash)
+            .build()
+
+        BloctoSDK.handleCallback(successCallbackUri)
+
+        val txHashSlot = slot<String>()
+        verify { onSuccess(capture(txHashSlot)) }
+        assertEquals(txHash, txHashSlot.captured)
+    }
+
+    @Test
+    fun `test sign and send transaction error callback`() {
+        val solana = Solana(api)
+
+        val transaction = createTransaction().apply {
+            add(setValueInstruction(PublicKey(solAddress)))
+        }
+
+        solana.signAndSendTransaction(
+            context = context,
+            fromAddress = solAddress,
+            transaction = transaction,
+            onSuccess = onSuccess,
+            onError = onError
+        )
+
+        val error = BloctoSDKError.USER_NOT_MATCH
+        val errorCallbackUri = Uri.Builder()
+            .scheme(Const.BLOCTO_SCHEME)
+            .appendQueryParameter(Const.KEY_REQUEST_ID, requestId)
+            .appendQueryParameter(Const.KEY_ERROR, error.message)
+            .build()
+
+        BloctoSDK.handleCallback(errorCallbackUri)
+
+        val errorSlot = slot<BloctoSDKError>()
+        verify { onError(capture(errorSlot)) }
+        assertEquals(error.message, errorSlot.captured.message)
     }
 
     private fun createTransaction(): Transaction {
