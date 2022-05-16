@@ -4,13 +4,12 @@ import android.content.Context
 import com.portto.sdk.core.Account
 import com.portto.sdk.core.Blockchain
 import com.portto.sdk.core.BloctoSDK
-import com.portto.sdk.core.Chain
 import com.portto.sdk.core.method.RequestAccountMethod
 import com.portto.sdk.wallet.BloctoSDKError
 
 val BloctoSDK.avalanche by lazy { Avalanche() }
 
-class Avalanche : Chain, Account {
+class Avalanche : Evm(), Account {
 
     override val blockchain: Blockchain
         get() = Blockchain.AVALANCHE

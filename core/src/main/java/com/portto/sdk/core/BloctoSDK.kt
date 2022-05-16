@@ -6,8 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.annotation.VisibleForTesting
 import com.portto.sdk.core.method.Method
-import com.portto.sdk.core.method.RequestAccountMethod
-import com.portto.sdk.core.method.SignAndSendTransactionMethod
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.Const
 import java.util.*
@@ -61,28 +59,7 @@ object BloctoSDK {
         val method = requestMap[requestId] ?: return
         requestMap.clear()
         if (handleError(method, uri)) return
-        when (method) {
-            is RequestAccountMethod -> handleRequestAccount(method, uri)
-            is SignAndSendTransactionMethod -> handleSignAndSendTransaction(method, uri)
-        }
-    }
-
-    private fun handleRequestAccount(method: RequestAccountMethod, uri: Uri) {
-        val address = uri.getQueryParameter(Const.KEY_ADDRESS)
-        if (address.isNullOrEmpty()) {
-            method.onError(BloctoSDKError.INVALID_RESPONSE)
-            return
-        }
-        method.onSuccess(address)
-    }
-
-    private fun handleSignAndSendTransaction(method: SignAndSendTransactionMethod, uri: Uri) {
-        val txHash = uri.getQueryParameter(Const.KEY_TX_HASH)
-        if (txHash.isNullOrEmpty()) {
-            method.onError(BloctoSDKError.INVALID_RESPONSE)
-            return
-        }
-        method.onSuccess(txHash)
+        method.handleCallback(uri)
     }
 
     private fun handleError(method: Method<*>, uri: Uri): Boolean {

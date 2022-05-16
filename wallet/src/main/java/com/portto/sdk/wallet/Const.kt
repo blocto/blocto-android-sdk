@@ -24,9 +24,12 @@ object Const {
     const val KEY_MESSAGE = "message"
     const val KEY_TX_HASH = "tx_hash"
     const val KEY_FROM = "from"
+    const val KEY_TO = "to"
     const val KEY_IS_INVOKE_WRAPPED = "is_invoke_wrapped"
     const val KEY_PUBLIC_KEY_SIGNATURE_PAIRS = "public_key_signature_pairs"
     const val KEY_APPEND_TX = "append_tx"
+    const val KEY_DATA = "data"
+    const val KEY_VALUE = "value"
 
     fun bloctoAuthority(debug: Boolean): String = if (debug) {
         BLOCTO_URI_AUTHORITY_DEBUG

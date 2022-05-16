@@ -2,26 +2,22 @@ package com.portto.valuedapp.evm
 
 import android.os.Bundle
 import android.widget.ArrayAdapter
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.portto.sdk.core.BloctoSDK
 import com.portto.sdk.evm.avalanche
 import com.portto.sdk.evm.bnb
 import com.portto.sdk.evm.ethereum
 import com.portto.sdk.evm.polygon
 import com.portto.sdk.wallet.BloctoSDKError
+import com.portto.valuedapp.R
 import com.portto.valuedapp.databinding.ActivityEvmValueDappBinding
 import com.portto.valuedapp.hideKeyboard
 
 class EvmValueDappActivity : AppCompatActivity() {
-
-    private enum class EvmChain(val title: String) {
-        ETHEREUM("ETH"),
-        BNB("BNB"),
-        POLYGON("POLYGON"),
-        AVALANCHE("AVAX")
-    }
 
     private data class Env(
         val name: String,
@@ -43,18 +39,7 @@ class EvmValueDappActivity : AppCompatActivity() {
     )
 
     private lateinit var binding: ActivityEvmValueDappBinding
-    private var currentChain = EvmChain.ETHEREUM
-    private var currentAddress: String? = null
-
-    private val requestAccountOnSuccess: (String) -> Unit = {
-        val address = "${it.substring(0, 6)}...${it.substring(it.length - 6, it.length)}"
-        binding.connectButton.text = address
-        currentAddress = it
-    }
-
-    private val onError: (BloctoSDKError) -> Unit = {
-        showError(it)
-    }
+    private val viewModel: EvmViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,15 +65,14 @@ class EvmValueDappActivity : AppCompatActivity() {
         }
 
         EvmChain.values().forEach {
-            val tab = binding.tabLayout.newTab().apply { text = it.title }
-            binding.tabLayout.addTab(tab)
+            val tab = binding.chainTabLayout.newTab().apply { text = it.title }
+            binding.chainTabLayout.addTab(tab)
         }
-        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        binding.chainTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 val position = tab?.position ?: return
-                currentChain = EvmChain.values()[position]
-                currentAddress = null
-                binding.connectButton.text = getString(com.portto.valuedapp.R.string.button_connect)
+                viewModel.currentChain = EvmChain.values()[position]
+                viewModel.resetView()
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) = Unit
@@ -100,46 +84,68 @@ class EvmValueDappActivity : AppCompatActivity() {
             it.hideKeyboard()
             requestAccount()
         }
+
+        binding.viewPager.adapter = EvmPagerAdapter(this)
+        binding.viewPager.isUserInputEnabled = false
+
+        TabLayoutMediator(
+            binding.methodTabLayout,
+            binding.viewPager,
+            true
+        ) { tab, position ->
+            tab.text = when (position) {
+                0 -> getString(R.string.title_sign_message)
+                else -> getString(R.string.title_send_transaction)
+            }
+        }.attach()
+
+        viewModel.error.observe(this) {
+            val message = it ?: "unexpected error"
+            Snackbar.make(binding.container, message, Snackbar.LENGTH_SHORT).show()
+        }
+
+        viewModel.resetView.observe(this) {
+            binding.connectButton.text = getString(R.string.button_connect)
+        }
     }
 
     private fun setEnv(env: Env) {
         BloctoSDK.init(appId = env.appId, debug = env.debug)
-        currentAddress = null
-        binding.connectButton.text = getString(com.portto.valuedapp.R.string.button_connect)
+        viewModel.resetView()
     }
 
     private fun requestAccount() {
-        when (currentChain) {
+        val requestAccountOnSuccess: (String) -> Unit = {
+            val address = "${it.substring(0, 6)}...${it.substring(it.length - 6, it.length)}"
+            binding.connectButton.text = address
+            viewModel.currentAddress = it
+        }
+
+        val requestAccountOnError: (BloctoSDKError) -> Unit = {
+            viewModel.showError(it)
+        }
+
+        when (viewModel.currentChain) {
             EvmChain.ETHEREUM -> BloctoSDK.ethereum.requestAccount(
                 context = this,
                 onSuccess = requestAccountOnSuccess,
-                onError = onError
+                onError = requestAccountOnError
             )
-            EvmChain.BNB -> BloctoSDK.bnb.requestAccount(
+            EvmChain.BNB_CHAIN -> BloctoSDK.bnb.requestAccount(
                 context = this,
                 onSuccess = requestAccountOnSuccess,
-                onError = onError
+                onError = requestAccountOnError
             )
             EvmChain.POLYGON -> BloctoSDK.polygon.requestAccount(
                 context = this,
                 onSuccess = requestAccountOnSuccess,
-                onError = onError
+                onError = requestAccountOnError
             )
             EvmChain.AVALANCHE -> BloctoSDK.avalanche.requestAccount(
                 context = this,
                 onSuccess = requestAccountOnSuccess,
-                onError = onError
+                onError = requestAccountOnError
             )
         }
-    }
-
-    private fun showError(error: BloctoSDKError) {
-        val message = error.message.split("_").joinToString(" ")
-        showError(message)
-    }
-
-    private fun showError(message: String?) {
-        val msg = message ?: "unexpected error"
-        Snackbar.make(binding.container, msg, Snackbar.LENGTH_SHORT).show()
     }
 }

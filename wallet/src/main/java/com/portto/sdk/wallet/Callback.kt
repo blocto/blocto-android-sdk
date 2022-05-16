@@ -12,6 +12,11 @@ sealed class Callback(open val requestId: String) {
         val txHash: String
     ) : Callback(requestId)
 
+    data class SendTransaction(
+        override val requestId: String,
+        val txHash: String
+    ) : Callback(requestId)
+
     data class Error(
         override val requestId: String,
         val error: String

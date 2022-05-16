@@ -42,7 +42,13 @@ dependencies {
     implementation "com.google.android.material:material:$versions.material"
     implementation "androidx.constraintlayout:constraintlayout:$versions.constraintlayout"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$versions.androidx_runtime"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.androidx_viewmodel"
+    implementation "androidx.activity:activity-ktx:$versions.androidx_activity"
+    implementation "androidx.fragment:fragment-ktx:$versions.androidx_fragment"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutine"
-    implementation "com.github.razir.progressbutton:progressbutton:2.1.0"
+    implementation "com.github.razir.progressbutton:progressbutton:$versions.progressbutton"
     implementation "com.portto.solana:web3:$versions.solana_web3"
+    implementation ("org.web3j:core:$versions.web3j") {
+        exclude module: 'bcprov-jdk15on'
+    }
 }

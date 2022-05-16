@@ -5,13 +5,15 @@ import com.portto.sdk.core.Blockchain
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.Const
 
-sealed class Method<T>(
+abstract class Method<T>(
     private val blockchain: Blockchain,
     val onSuccess: (T) -> Unit,
     val onError: (BloctoSDKError) -> Unit
 ) {
 
     abstract val name: String
+
+    abstract fun handleCallback(uri: Uri)
 
     open fun encodeToUri(authority: String, appId: String, requestId: String): Uri.Builder {
         return Uri.Builder()
