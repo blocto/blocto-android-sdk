@@ -8,6 +8,12 @@ fun String.decodeHex(): ByteArray {
         .toByteArray()
 }
 
+fun String.isValidHex(need0xPrefix: Boolean): Boolean {
+    val regex = Regex("(0[xX])?[0-9a-fA-F]*")
+    return regex.matches(this) &&
+            if (need0xPrefix) this.startsWith("0x") else true
+}
+
 @OptIn(ExperimentalUnsignedTypes::class)
 fun ByteArray.toHexString(): String {
     return this

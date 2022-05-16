@@ -95,6 +95,11 @@ class EvmSendTransactionFragment : Fragment(R.layout.fragment_evm_send_transacti
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        view?.clearFocus()
+    }
+
     private fun setValue() {
         binding.setValueTxHash.isVisible = false
 
