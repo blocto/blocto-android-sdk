@@ -1,16 +1,31 @@
 package com.portto.sdk.evm
 
 import android.content.Context
+import com.portto.sdk.core.Account
 import com.portto.sdk.core.BloctoSDK
 import com.portto.sdk.core.Chain
 import com.portto.sdk.core.isValidHex
+import com.portto.sdk.core.method.RequestAccountMethod
 import com.portto.sdk.evm.method.SendTransactionMethod
 import com.portto.sdk.evm.method.SignMessageMethod
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.EvmSignType
 import java.math.BigInteger
 
-abstract class Evm : Chain {
+abstract class Evm : Chain, Account {
+
+    override fun requestAccount(
+        context: Context,
+        onSuccess: (String) -> Unit,
+        onError: (BloctoSDKError) -> Unit
+    ) {
+        val method = RequestAccountMethod(
+            blockchain = blockchain,
+            onSuccess = onSuccess,
+            onError = onError
+        )
+        BloctoSDK.send(context, method)
+    }
 
     fun signMessage(
         context: Context,

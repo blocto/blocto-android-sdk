@@ -1,29 +1,12 @@
 package com.portto.sdk.evm
 
-import android.content.Context
-import com.portto.sdk.core.Account
 import com.portto.sdk.core.Blockchain
 import com.portto.sdk.core.BloctoSDK
-import com.portto.sdk.core.method.RequestAccountMethod
-import com.portto.sdk.wallet.BloctoSDKError
 
 val BloctoSDK.avalanche by lazy { Avalanche() }
 
-class Avalanche : Evm(), Account {
+class Avalanche : Evm() {
 
     override val blockchain: Blockchain
         get() = Blockchain.AVALANCHE
-
-    override fun requestAccount(
-        context: Context,
-        onSuccess: (String) -> Unit,
-        onError: (BloctoSDKError) -> Unit
-    ) {
-        val method = RequestAccountMethod(
-            blockchain = blockchain,
-            onSuccess = onSuccess,
-            onError = onError
-        )
-        BloctoSDK.send(context, method)
-    }
 }
