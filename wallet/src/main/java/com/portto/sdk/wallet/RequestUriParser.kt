@@ -2,7 +2,6 @@ package com.portto.sdk.wallet
 
 import android.net.Uri
 import org.json.JSONObject
-import java.math.BigInteger
 
 object RequestUriParser {
 
@@ -73,6 +72,22 @@ object RequestUriParser {
                     toAddress = toAddress,
                     data = data,
                     value = value.orEmpty()
+                )
+            }
+            "sign_message" -> {
+                val fromAddress = uri.getQueryParameter(Const.KEY_FROM)
+                val signType = uri.getQueryParameter(Const.KEY_TYPE)
+                val message = uri.getQueryParameter(Const.KEY_MESSAGE)
+                if (fromAddress == null || signType == null || message == null) {
+                    return ParseResult.Error
+                }
+                return ParseResult.SignMessage(
+                    appId = appId,
+                    requestId = requestId,
+                    blockchain = blockchain,
+                    fromAddress = fromAddress,
+                    signType = signType,
+                    message = message
                 )
             }
             else -> return ParseResult.Error

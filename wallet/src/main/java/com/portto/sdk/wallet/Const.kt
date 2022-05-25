@@ -30,6 +30,8 @@ object Const {
     const val KEY_APPEND_TX = "append_tx"
     const val KEY_DATA = "data"
     const val KEY_VALUE = "value"
+    const val KEY_TYPE = "type"
+    const val KEY_SIGNATURE = "signature"
 
     fun bloctoAuthority(debug: Boolean): String = if (debug) {
         BLOCTO_URI_AUTHORITY_DEBUG

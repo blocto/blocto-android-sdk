@@ -16,7 +16,7 @@ enum class EvmChain(
     ETHEREUM(
         title = "Ethereum",
         symbol = "ETH",
-        mainnetContractAddress = "0x806243c7368a90D957592B55875eF4C3353C5bEa",
+        mainnetContractAddress = "0xfde90c9Bc193F520d119302a2dB8520D3A4408c8",
         testnetContractAddress = "0x58F385777aa6699b81f741Dd0d5B272A34C1c774",
         mainnetRpcUrl = "https://mainnet.infura.io/v3/${Config.INFURA_ID}",
         testnetRpcUrl = "https://rinkeby.infura.io/v3/${Config.INFURA_ID}",
@@ -26,7 +26,7 @@ enum class EvmChain(
     BNB_CHAIN(
         title = "BNB Chain",
         symbol = "BNB",
-        mainnetContractAddress = "0x806243c7368a90D957592B55875eF4C3353C5bEa",
+        mainnetContractAddress = "0xfde90c9Bc193F520d119302a2dB8520D3A4408c8",
         testnetContractAddress = "0xfde90c9Bc193F520d119302a2dB8520D3A4408c8",
         mainnetRpcUrl = "https://bsc-dataseed.binance.org",
         testnetRpcUrl = "https://data-seed-prebsc-1-s1.binance.org:8545",
@@ -36,7 +36,7 @@ enum class EvmChain(
     POLYGON(
         title = "Polygon",
         symbol = "MATIC",
-        mainnetContractAddress = "0x806243c7368a90D957592B55875eF4C3353C5bEa",
+        mainnetContractAddress = "0x009c403BdFaE357d82AAef2262a163287c30B739",
         testnetContractAddress = "0xfde90c9Bc193F520d119302a2dB8520D3A4408c8",
         mainnetRpcUrl = "https://polygon-mainnet.infura.io/v3/${Config.INFURA_ID}",
         testnetRpcUrl = "https://polygon-mumbai.infura.io/v3/${Config.INFURA_ID}",
@@ -46,11 +46,11 @@ enum class EvmChain(
     AVALANCHE(
         title = "Avalanche",
         symbol = "AVAX",
-        mainnetContractAddress = "0x806243c7368a90D957592B55875eF4C3353C5bEa",
+        mainnetContractAddress = "0xfde90c9Bc193F520d119302a2dB8520D3A4408c8",
         testnetContractAddress = "0xfde90c9Bc193F520d119302a2dB8520D3A4408c8",
         mainnetRpcUrl = "https://api.avax.network/ext/bc/C/rpc",
         testnetRpcUrl = "https://api.avax-test.network/ext/bc/C/rpc",
-        mainnetExplorerDomain = "avascan.info",
+        mainnetExplorerDomain = "snowtrace.io",
         testnetExplorerDomain = "testnet.snowtrace.io"
     )
 }

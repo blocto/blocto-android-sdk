@@ -11,6 +11,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven { url "https://s01.oss.sonatype.org/content/repositories/staging/" }
+        maven { url "https://jitpack.io" }
     }
 }
 rootProject.name = "BloctoSDK"
