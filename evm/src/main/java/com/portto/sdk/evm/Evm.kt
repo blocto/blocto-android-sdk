@@ -21,7 +21,8 @@ abstract class Evm : Chain {
         onError: (BloctoSDKError) -> Unit
     ) {
         if (signType == EvmSignType.ETH_SIGN && !message.isValidHex(need0xPrefix = true)) {
-            throw IllegalArgumentException(BloctoSDKError.ETH_SIGN_INVALID_HEX_STRING.message)
+            onError(BloctoSDKError.ETH_SIGN_INVALID_HEX_STRING)
+            return
         }
         val method = SignMessageMethod(
             fromAddress,

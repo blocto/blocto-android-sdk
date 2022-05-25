@@ -153,48 +153,39 @@ class EvmSignMessageFragment : Fragment(R.layout.fragment_evm_sign_message) {
             viewModel.showError(it)
         }
 
-        try {
-            when (viewModel.currentChain) {
-                EvmChain.ETHEREUM -> BloctoSDK.ethereum.signMessage(
-                    context = requireContext(),
-                    fromAddress = address,
-                    signType = signType,
-                    message = message,
-                    onSuccess = onSuccess,
-                    onError = onError
-                )
-                EvmChain.BNB_CHAIN -> BloctoSDK.bnb.signMessage(
-                    context = requireContext(),
-                    fromAddress = address,
-                    signType = signType,
-                    message = message,
-                    onSuccess = onSuccess,
-                    onError = onError
-                )
-                EvmChain.POLYGON -> BloctoSDK.polygon.signMessage(
-                    context = requireContext(),
-                    fromAddress = address,
-                    signType = signType,
-                    message = message,
-                    onSuccess = onSuccess,
-                    onError = onError
-                )
-                EvmChain.AVALANCHE -> BloctoSDK.avalanche.signMessage(
-                    context = requireContext(),
-                    fromAddress = address,
-                    signType = signType,
-                    message = message,
-                    onSuccess = onSuccess,
-                    onError = onError
-                )
-            }
-        } catch (error: Throwable) {
-            val bloctoError = BloctoSDKError.values().find { it.message == error.message }
-            if (bloctoError == null) {
-                viewModel.showError(error.message)
-            } else {
-                onError(bloctoError)
-            }
+        when (viewModel.currentChain) {
+            EvmChain.ETHEREUM -> BloctoSDK.ethereum.signMessage(
+                context = requireContext(),
+                fromAddress = address,
+                signType = signType,
+                message = message,
+                onSuccess = onSuccess,
+                onError = onError
+            )
+            EvmChain.BNB_CHAIN -> BloctoSDK.bnb.signMessage(
+                context = requireContext(),
+                fromAddress = address,
+                signType = signType,
+                message = message,
+                onSuccess = onSuccess,
+                onError = onError
+            )
+            EvmChain.POLYGON -> BloctoSDK.polygon.signMessage(
+                context = requireContext(),
+                fromAddress = address,
+                signType = signType,
+                message = message,
+                onSuccess = onSuccess,
+                onError = onError
+            )
+            EvmChain.AVALANCHE -> BloctoSDK.avalanche.signMessage(
+                context = requireContext(),
+                fromAddress = address,
+                signType = signType,
+                message = message,
+                onSuccess = onSuccess,
+                onError = onError
+            )
         }
     }
 
