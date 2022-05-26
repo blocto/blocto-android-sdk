@@ -48,7 +48,7 @@ object BloctoSDK {
                 appId = appId,
                 requestId = requestId
             ).build().toString()
-            context.startActivity(WebSDKActivity.newIntent(context, url))
+            context.startActivity(WebSDKActivity.newIntent(context, requestId, url))
         }
     }
 

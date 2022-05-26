@@ -3,6 +3,7 @@ package com.portto.sdk.core
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
@@ -12,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import com.portto.sdk.core.databinding.ActivityWebSdkBinding
+import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.Const
 
 class WebSDKActivity : AppCompatActivity() {
@@ -21,13 +23,18 @@ class WebSDKActivity : AppCompatActivity() {
 
         fun newIntent(
             context: Context,
+            requestId: String,
             url: String
         ) = Intent(context, WebSDKActivity::class.java).putExtras(
-            bundleOf(KEY_URL to url)
+            bundleOf(
+                Const.KEY_REQUEST_ID to requestId,
+                KEY_URL to url,
+            )
         )
     }
 
     private lateinit var binding: ActivityWebSdkBinding
+    private val requestId by lazy { intent.getStringExtra(Const.KEY_REQUEST_ID) }
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,5 +78,17 @@ class WebSDKActivity : AppCompatActivity() {
             }
             loadUrl(url)
         }
+    }
+
+    override fun onBackPressed() {
+        if (requestId != null) {
+            val uri = Uri.Builder()
+                .scheme(Const.BLOCTO_SCHEME)
+                .appendQueryParameter(Const.KEY_REQUEST_ID, requestId)
+                .appendQueryParameter(Const.KEY_ERROR, BloctoSDKError.USER_REJECTED.message)
+                .build()
+            BloctoSDK.handleCallback(uri)
+        }
+        super.onBackPressed()
     }
 }
