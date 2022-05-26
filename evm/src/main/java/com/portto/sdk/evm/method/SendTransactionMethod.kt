@@ -34,7 +34,6 @@ class SendTransactionMethod(
             .appendQueryParameter(Const.KEY_FROM, fromAddress)
             .appendQueryParameter(Const.KEY_TO, toAddress)
             .appendQueryParameter(Const.KEY_DATA, data)
-            .appendQueryParameter(Const.KEY_VALUE, String.format("%#X", value))
-
+            .appendQueryParameter(Const.KEY_VALUE, String.format("%#x", value))
     }
 }
