@@ -15,6 +15,10 @@ object CallbackUriBuilder {
                 builder.appendQueryParameter(Const.KEY_ADDRESS, callback.address)
             is Callback.SignAndSendTransaction ->
                 builder.appendQueryParameter(Const.KEY_TX_HASH, callback.txHash)
+            is Callback.SendTransaction ->
+                builder.appendQueryParameter(Const.KEY_TX_HASH, callback.txHash)
+            is Callback.SignMessage ->
+                builder.appendQueryParameter(Const.KEY_SIGNATURE, callback.signature)
             is Callback.Error ->
                 builder.appendQueryParameter(Const.KEY_ERROR, callback.error)
         }

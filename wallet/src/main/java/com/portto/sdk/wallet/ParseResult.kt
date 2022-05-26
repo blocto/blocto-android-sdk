@@ -19,5 +19,24 @@ sealed class ParseResult {
         val appendTx: Map<String, String>? = null
     ) : ParseResult()
 
+    data class SendTransaction(
+        val appId: String,
+        val requestId: String,
+        val blockchain: String,
+        val fromAddress: String,
+        val toAddress: String,
+        val data: String,
+        val value: String
+    ) : ParseResult()
+
+    data class SignMessage(
+        val appId: String,
+        val requestId: String,
+        val blockchain: String,
+        val fromAddress: String,
+        val signType: String,
+        val message: String
+    ) : ParseResult()
+
     object Error : ParseResult()
 }

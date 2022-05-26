@@ -56,6 +56,40 @@ object RequestUriParser {
                     appendTx = appendTx
                 )
             }
+            "send_transaction" -> {
+                val fromAddress = uri.getQueryParameter(Const.KEY_FROM)
+                val toAddress = uri.getQueryParameter(Const.KEY_TO)
+                val data = uri.getQueryParameter(Const.KEY_DATA)
+                val value = uri.getQueryParameter(Const.KEY_VALUE)
+                if (fromAddress == null || toAddress == null || data == null) {
+                    return ParseResult.Error
+                }
+                return ParseResult.SendTransaction(
+                    appId = appId,
+                    requestId = requestId,
+                    blockchain = blockchain,
+                    fromAddress = fromAddress,
+                    toAddress = toAddress,
+                    data = data,
+                    value = value.orEmpty()
+                )
+            }
+            "sign_message" -> {
+                val fromAddress = uri.getQueryParameter(Const.KEY_FROM)
+                val signType = uri.getQueryParameter(Const.KEY_TYPE)
+                val message = uri.getQueryParameter(Const.KEY_MESSAGE)
+                if (fromAddress == null || signType == null || message == null) {
+                    return ParseResult.Error
+                }
+                return ParseResult.SignMessage(
+                    appId = appId,
+                    requestId = requestId,
+                    blockchain = blockchain,
+                    fromAddress = fromAddress,
+                    signType = signType,
+                    message = message
+                )
+            }
             else -> return ParseResult.Error
         }
     }

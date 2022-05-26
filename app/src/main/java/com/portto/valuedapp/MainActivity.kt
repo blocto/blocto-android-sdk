@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.portto.valuedapp.databinding.ActivityMainBinding
+import com.portto.valuedapp.evm.EvmValueDappActivity
 import com.portto.valuedapp.solana.SolanaValueDappActivity
 
 class MainActivity : AppCompatActivity() {
@@ -17,6 +18,10 @@ class MainActivity : AppCompatActivity() {
 
         binding.solanaDapp.setOnClickListener {
             startActivity(Intent(this, SolanaValueDappActivity::class.java))
+        }
+
+        binding.evmDapp.setOnClickListener {
+            startActivity(Intent(this, EvmValueDappActivity::class.java))
         }
     }
 }
