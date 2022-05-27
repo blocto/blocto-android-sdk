@@ -203,8 +203,8 @@ class EvmSendTransactionFragment : Fragment(R.layout.fragment_evm_send_transacti
 
     private fun sendTransaction(
         fromAddress: String,
-        data: String, value:
-        BigInteger = BigInteger.ZERO,
+        data: String,
+        value: BigInteger = BigInteger.ZERO,
         onSuccess: (String) -> Unit,
         onError: (BloctoSDKError) -> Unit
     ) {
