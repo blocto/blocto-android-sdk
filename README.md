@@ -6,7 +6,14 @@
 
 Integrate Blocto service into your dApp on Android.
 
-**Currently only support Solana**. More blockchains are coming soon.
+Currently support
+
+* Solana
+* Ethereum
+* BNB Chain
+* Polygon
+* Avalanche
+* More blockchains are coming soon
 
 ## Installation
 
@@ -14,13 +21,26 @@ Add the dependency below to your module's `build.gradle` file
 
 ```
 dependencies {
-    implementation "com.portto.sdk:solana:0.1.0"
+    implementation "com.portto.sdk:solana:$bloctoSdkVersion"
+    implementation "com.portto.sdk:evm:$bloctoSdkVersion"
 }
 ```
 
 ## Usage
 
-Please refer to [**document**](https://docs.blocto.app/blocto-sdk/android-sdk)
+Please refer to [**documentation**](https://docs.blocto.app/blocto-sdk/android-sdk)
+
+## Demo App
+
+To run EVM demo, **Infura** id is needed to connect to RPC endpoint.
+
+Put your id into `Config.kt`
+
+```
+object Config {
+    const val INFURA_ID = "YOUR_INFURA_ID"
+}
+```
 
 ## Author
 
