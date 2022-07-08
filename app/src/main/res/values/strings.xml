@@ -2,6 +2,7 @@
     <string name="app_name">BloctoSDK Example</string>
     <string name="solana_dapp_name">Solana Value Dapp</string>
     <string name="evm_dapp_name">EVM Value Dapp</string>
+    <string name="flow_dapp_name">Flow Value Dapp</string>
     <string name="button_connect">Connect</string>
     <string name="button_send_transaction">Send Transaction</string>
     <string name="button_get_value">Get Value</string>
