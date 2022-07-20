@@ -13,6 +13,8 @@ import com.portto.sdk.evm.bnb
 import com.portto.sdk.evm.ethereum
 import com.portto.sdk.evm.polygon
 import com.portto.sdk.wallet.BloctoSDKError
+import com.portto.valuedapp.Config.APP_ID_MAINNET
+import com.portto.valuedapp.Config.APP_ID_TESTNET
 import com.portto.valuedapp.R
 import com.portto.valuedapp.databinding.ActivityEvmValueDappBinding
 import com.portto.valuedapp.hideKeyboard
@@ -28,12 +30,12 @@ class EvmValueDappActivity : AppCompatActivity() {
     private val envs = listOf(
         Env(
             name = "Mainnet",
-            appId = "0896e44c-20fd-443b-b664-d305b52fe8e8",
+            appId = APP_ID_MAINNET,
             debug = false
         ),
         Env(
             name = "Testnet",
-            appId = "57f397df-263c-4e97-b61f-15b67b9ce285",
+            appId = APP_ID_TESTNET,
             debug = true
         )
     )

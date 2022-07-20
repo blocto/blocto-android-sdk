@@ -89,8 +89,8 @@ class FlowValueDappActivity : AppCompatActivity() {
     private fun logIn() {
         BloctoSDK.flow.authenticate(
             context = this,
-            flowAppId = Config.flowAppIdentifier,
-            flowNonce = Config.flowNonce,
+            flowAppId = Config.FLOW_APP_IDENTIFIER,
+            flowNonce = Config.FLOW_NONCE,
             onSuccess = { viewModel.setAccountProofData(it) },
             onError = { viewModel.showError(it) })
     }
