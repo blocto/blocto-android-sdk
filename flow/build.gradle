@@ -35,4 +35,6 @@ android {
 dependencies {
     api project(':core')
     implementation "androidx.core:core-ktx:$versions.androidx_core"
+    testImplementation "junit:junit:$versions.junit"
+    testImplementation "org.robolectric:robolectric:$versions.robolectric"
 }

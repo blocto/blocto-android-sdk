@@ -9,7 +9,7 @@ import com.portto.sdk.core.method.RequestAccountMethod
 import com.portto.sdk.evm.method.SendTransactionMethod
 import com.portto.sdk.evm.method.SignMessageMethod
 import com.portto.sdk.wallet.BloctoSDKError
-import com.portto.sdk.wallet.EvmSignType
+import com.portto.sdk.wallet.evm.EvmSignType
 import java.math.BigInteger
 
 abstract class Evm : Chain, Account {

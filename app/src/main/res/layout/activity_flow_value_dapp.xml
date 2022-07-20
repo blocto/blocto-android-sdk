@@ -53,76 +53,30 @@
                 <TextView
                     android:id="@+id/current_address"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:ellipsize="middle"
-                    android:singleLine="true"
+                    android:gravity="center_vertical"
                     tools:text="0x123456" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/connect_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:layout_marginStart="16dp"
                     android:text="@string/button_connect"
                     android:textAllCaps="false" />
             </LinearLayout>
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/title_set_value"
-                android:textColor="@color/black"
-                android:textSize="20sp" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:hintEnabled="false">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/value_input"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="123"
-                    android:inputType="number" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/set_value_tx_hash"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="?android:attr/selectableItemBackground"
-                android:drawableEnd="@drawable/ic_open"
-                android:drawablePadding="4dp"
-                android:ellipsize="middle"
-                android:gravity="center_vertical"
-                android:singleLine="true"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                android:visibility="gone"
-                tools:text="4yXp3W1bz3V8cynyd8rwda81dEvgpCZ5vnSRw5PKjfsoVCGJi1jmDRsMn5haX8knr292XDkZ18pxcXs8kiG1YyKV"
-                tools:visibility="visible" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/set_value_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:enabled="false"
-                android:text="@string/button_send_transaction"
-                android:textAllCaps="false" />
-
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="16dp" />
+
+            <include layout="@layout/layout_sign_message" />
+
+            <include layout="@layout/layout_set_value" />
+
+            <include layout="@layout/layout_get_value" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
     </ScrollView>

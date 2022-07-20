@@ -1,22 +1,20 @@
 package com.portto.valuedapp.flow
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import com.portto.sdk.core.BloctoSDK
-import com.portto.sdk.flow.flow
+import androidx.lifecycle.ViewModel
+import com.portto.sdk.wallet.BloctoSDKError
+import com.portto.sdk.wallet.flow.AccountProofData
 
-class FlowViewModel(val app: Application) : AndroidViewModel(app) {
-    // Env options
+class FlowViewModel : ViewModel() {
+    // Network envs
     val envs = listOf(FlowEnv.MAINNET, FlowEnv.TESTNET)
 
     private val _currentEnv = MutableLiveData(FlowEnv.MAINNET)
     val currentEnv: LiveData<FlowEnv> get() = _currentEnv
 
-    private val _currentAddress = MutableLiveData<String?>(null)
-    val currentAddress: LiveData<String?> get() = _currentAddress
+    private val _accountProofData = MutableLiveData<AccountProofData?>(null)
+    val accountProofData: LiveData<AccountProofData?> get() = _accountProofData
 
     private val _errorMsg = MutableLiveData<String?>(null)
     val errorMsg: LiveData<String?> get() = _errorMsg
@@ -25,15 +23,16 @@ class FlowViewModel(val app: Application) : AndroidViewModel(app) {
         _currentEnv.value = env
     }
 
-    fun setCurrentAddress(address: String?) {
-        _currentAddress.value = address
+    fun setAccountProofData(data: AccountProofData?) {
+        _accountProofData.value = data
     }
 
-    fun logOut() {
-        _currentAddress.value = null
+    fun showError(error: BloctoSDKError) {
+        val message = error.message.split("_").joinToString(" ")
+        showError(message)
     }
 
-    fun setErrorMsg(msg: String?) {
-        _errorMsg.value = msg
+    fun showError(message: String) {
+        _errorMsg.value = message
     }
 }

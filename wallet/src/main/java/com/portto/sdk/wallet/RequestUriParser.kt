@@ -17,19 +17,20 @@ object RequestUriParser {
         }
 
         when (method) {
-            "request_account" -> return ParseResult.RequestAccount(
+            METHOD_REQUEST_ACCOUNT -> return ParseResult.RequestAccount(
                 appId = appId,
                 requestId = requestId,
                 blockchain = blockchain
             )
-            "sign_and_send_transaction" -> {
+            METHOD_SIGN_AND_SEND_TX -> {
                 val fromAddress = uri.getQueryParameter(Const.KEY_FROM)
                 val message = uri.getQueryParameter(Const.KEY_MESSAGE)
                 if (fromAddress == null || message == null) {
                     return ParseResult.Error
                 }
 
-                val isInvokeWrapped = uri.getQueryParameter(Const.KEY_IS_INVOKE_WRAPPED)?.toBoolean() ?: false
+                val isInvokeWrapped =
+                    uri.getQueryParameter(Const.KEY_IS_INVOKE_WRAPPED)?.toBoolean() ?: false
 
                 val publicKeySignaturePairs = uri.queryParameterNames
                     .filter { it.startsWith(Const.KEY_PUBLIC_KEY_SIGNATURE_PAIRS) }
@@ -56,7 +57,7 @@ object RequestUriParser {
                     appendTx = appendTx
                 )
             }
-            "send_transaction" -> {
+            METHOD_SEND_TX -> {
                 val fromAddress = uri.getQueryParameter(Const.KEY_FROM)
                 val toAddress = uri.getQueryParameter(Const.KEY_TO)
                 val data = uri.getQueryParameter(Const.KEY_DATA)
@@ -74,7 +75,7 @@ object RequestUriParser {
                     value = value.orEmpty()
                 )
             }
-            "sign_message" -> {
+            METHOD_SIGN_MESSAGE -> {
                 val fromAddress = uri.getQueryParameter(Const.KEY_FROM)
                 val signType = uri.getQueryParameter(Const.KEY_TYPE)
                 val message = uri.getQueryParameter(Const.KEY_MESSAGE)
@@ -88,6 +89,18 @@ object RequestUriParser {
                     fromAddress = fromAddress,
                     signType = signType,
                     message = message
+                )
+            }
+            METHOD_AUTHN -> {
+                val nonce = uri.getQueryParameter(Const.KEY_FLOW_NONCE)
+                val appIdentifier = uri.getQueryParameter(Const.KEY_FLOW_APP_ID)
+                if (nonce == null || appIdentifier == null) return ParseResult.Error
+                return ParseResult.Authentication(
+                    appId = appId,
+                    requestId = requestId,
+                    blockchain = blockchain,
+                    flowAppId = appIdentifier,
+                    flowNonce = nonce,
                 )
             }
             else -> return ParseResult.Error

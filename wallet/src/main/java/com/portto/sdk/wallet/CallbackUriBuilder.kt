@@ -11,6 +11,7 @@ object CallbackUriBuilder {
             .appendQueryParameter(Const.KEY_REQUEST_ID, callback.requestId)
 
         when (callback) {
+            is Callback.Authentication -> builder.appendAuthnQueryParameters(callback)
             is Callback.RequestAccount ->
                 builder.appendQueryParameter(Const.KEY_ADDRESS, callback.address)
             is Callback.SignAndSendTransaction ->
@@ -24,5 +25,24 @@ object CallbackUriBuilder {
         }
 
         return builder.build()
+    }
+
+    private fun Uri.Builder.appendAuthnQueryParameters(callback: Callback.Authentication) {
+        appendQueryParameter(Const.KEY_ADDRESS, callback.address)
+
+        callback.signatures.forEachIndexed { index, compositeSignature ->
+            appendQueryParameter(
+                "${Const.KEY_ACCOUNT_PROOF}[$index][${Const.KEY_ADDRESS}]",
+                compositeSignature.address
+            )
+            appendQueryParameter(
+                "${Const.KEY_ACCOUNT_PROOF}[$index][${Const.KEY_KEY_ID}]",
+                compositeSignature.keyId
+            )
+            appendQueryParameter(
+                "${Const.KEY_ACCOUNT_PROOF}[$index][${Const.KEY_SIGNATURE}]",
+                compositeSignature.signature
+            )
+        }
     }
 }

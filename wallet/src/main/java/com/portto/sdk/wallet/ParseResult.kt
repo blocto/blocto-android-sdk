@@ -38,5 +38,16 @@ sealed class ParseResult {
         val message: String
     ) : ParseResult()
 
+    /**
+     * Flow authn
+     */
+    data class Authentication(
+        val appId: String,
+        val requestId: String,
+        val blockchain: String,
+        val flowAppId: String,
+        val flowNonce: String,
+    ) : ParseResult()
+
     object Error : ParseResult()
 }

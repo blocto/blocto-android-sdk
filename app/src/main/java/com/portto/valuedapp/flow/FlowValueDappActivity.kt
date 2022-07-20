@@ -3,25 +3,32 @@ package com.portto.valuedapp.flow
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.ArrayAdapter
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.portto.sdk.core.BloctoSDK
 import com.portto.sdk.flow.flow
+import com.portto.valuedapp.Config
 import com.portto.valuedapp.databinding.ActivityFlowValueDappBinding
+import com.portto.valuedapp.databinding.LayoutSignMessageBinding
 
 class FlowValueDappActivity : AppCompatActivity() {
     private lateinit var binding: ActivityFlowValueDappBinding
+    private lateinit var signMsgBinding: LayoutSignMessageBinding
 
     private val viewModel by viewModels<FlowViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFlowValueDappBinding.inflate(layoutInflater)
+        signMsgBinding = LayoutSignMessageBinding.bind(binding.root)
         setContentView(binding.root)
 
         binding.setUpUi()
+
+        signMsgBinding.setUpUi()
 
         viewModel.bindUi()
     }
@@ -43,6 +50,12 @@ class FlowValueDappActivity : AppCompatActivity() {
         }
     }
 
+    private fun LayoutSignMessageBinding.setUpUi() {
+        signButton.setOnClickListener {
+            signMessage(input.text?.toString())
+        }
+    }
+
     private fun FlowViewModel.bindUi() {
         val lifecycleOwner = this@FlowValueDappActivity
         currentEnv.observe(lifecycleOwner) {
@@ -53,32 +66,66 @@ class FlowValueDappActivity : AppCompatActivity() {
         }
 
         // Update address label and Connect button
-        currentAddress.observe(lifecycleOwner) {
-            if (it.isNullOrEmpty()) {
+        accountProofData.observe(lifecycleOwner) {
+            Log.d("Test", "account data: $it")
+            if (it == null) {
                 binding.connectButton.text = "Log in"
                 binding.connectButton.setOnClickListener { logIn() }
                 binding.currentAddress.text = ""
             } else {
                 binding.connectButton.text = "Log out"
                 binding.connectButton.setOnClickListener { logOut() }
-                binding.currentAddress.text = "Address: $it"
+                binding.currentAddress.text = it.address
             }
         }
 
-        errorMsg.observe(lifecycleOwner)
-        {
+        errorMsg.observe(lifecycleOwner) {
             it?.let {
                 Snackbar.make(binding.container, it, Snackbar.LENGTH_SHORT).show()
-                setErrorMsg(null)
             }
         }
     }
 
     private fun logIn() {
-        BloctoSDK.flow.requestAccount(
+        BloctoSDK.flow.authenticate(
             context = this,
-            onSuccess = { viewModel.setCurrentAddress(it) },
-            onError = { viewModel.setErrorMsg(it.message) })
+            flowAppId = Config.flowAppIdentifier,
+            flowNonce = Config.flowNonce,
+            onSuccess = { viewModel.setAccountProofData(it) },
+            onError = { viewModel.showError(it) })
+    }
+
+    private fun logOut() {
+        viewModel.setAccountProofData(null)
+    }
+
+    private fun signMessage(inputMsg: String?) {
+        val address = viewModel.accountProofData.value?.address
+        if (address == null) {
+            viewModel.showError("wallet not connected")
+            return
+        }
+
+        val msg = inputMsg?.trim()
+        if (msg.isNullOrBlank()) {
+            viewModel.showError("empty message")
+            return
+        }
+
+//        BloctoSDK.flow.signMessage(
+//            context = this,
+//            fromAddress = address,
+//            signType = SignTypeFlow.USER_SIGNATURE,
+//            message = msg,
+//            onSuccess = {
+//                signMsgBinding.signature.text = it
+//                signMsgBinding.signature.isVisible = true
+//            },
+//            onError = {
+//                signMsgBinding.signature.text = ""
+//                signMsgBinding.signature.isVisible = false
+//                viewModel.showError(it)
+//            })
     }
 
     private fun openExplorer(txHash: String) {
