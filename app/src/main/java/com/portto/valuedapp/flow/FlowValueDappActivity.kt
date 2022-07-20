@@ -3,7 +3,6 @@ package com.portto.valuedapp.flow
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.widget.ArrayAdapter
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -67,7 +66,6 @@ class FlowValueDappActivity : AppCompatActivity() {
 
         // Update address label and Connect button
         accountProofData.observe(lifecycleOwner) {
-            Log.d("Test", "account data: $it")
             if (it == null) {
                 binding.connectButton.text = "Log in"
                 binding.connectButton.setOnClickListener { logIn() }

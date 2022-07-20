@@ -1,7 +1,6 @@
 package com.portto.sdk.flow.method
 
 import android.net.Uri
-import android.util.Log
 import com.portto.sdk.core.Blockchain
 import com.portto.sdk.core.method.Method
 import com.portto.sdk.flow.parse
@@ -22,7 +21,6 @@ class AuthenticateMethod(
         get() = METHOD_AUTHN
 
     override fun handleCallback(uri: Uri) {
-        Log.d("Test", "handleCallback Uri: $uri")
         val result = uri.parse()
         if (result != null) {
             val (address, signatures) = result

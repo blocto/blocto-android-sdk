@@ -1,6 +1,7 @@
 package com.portto.sdk.flow
 
 import android.net.Uri
+import com.portto.sdk.wallet.Const.KEY_ACCOUNT_PROOF
 import com.portto.sdk.wallet.Const.KEY_ADDRESS
 import com.portto.sdk.wallet.Const.KEY_KEY_ID
 import com.portto.sdk.wallet.Const.KEY_SIGNATURE
@@ -19,17 +20,17 @@ internal fun Uri.parse(): Pair<String, List<CompositeSignature>>? {
     val compositeSignatureList = mutableListOf<CompositeSignature>()
 
     var index = 0
-    while (getQueryParameter("account_proof[$index][$KEY_ADDRESS]") != null) {
+    while (getQueryParameter("$KEY_ACCOUNT_PROOF[$index][$KEY_ADDRESS]") != null) {
         compositeSignatureList.add(
             CompositeSignature(
                 // Addresses shall be the same
-                address = getQueryParameter("account_proof[$index][$KEY_ADDRESS]")
+                address = getQueryParameter("$KEY_ACCOUNT_PROOF[$index][$KEY_ADDRESS]")
                     .takeIf { it == address } ?: return null,
 
-                keyId = getQueryParameter("account_proof[$index][$KEY_KEY_ID]")
+                keyId = getQueryParameter("$KEY_ACCOUNT_PROOF[$index][$KEY_KEY_ID]")
                     ?: return null,
 
-                signature = getQueryParameter("account_proof[$index][$KEY_SIGNATURE]")
+                signature = getQueryParameter("$KEY_ACCOUNT_PROOF[$index][$KEY_SIGNATURE]")
                     ?: return null
             )
         )
