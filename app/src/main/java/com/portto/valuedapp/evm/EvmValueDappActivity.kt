@@ -18,6 +18,7 @@ import com.portto.valuedapp.Config.APP_ID_TESTNET
 import com.portto.valuedapp.R
 import com.portto.valuedapp.databinding.ActivityEvmValueDappBinding
 import com.portto.valuedapp.hideKeyboard
+import com.portto.valuedapp.shortenAddress
 
 class EvmValueDappActivity : AppCompatActivity() {
 
@@ -118,8 +119,7 @@ class EvmValueDappActivity : AppCompatActivity() {
 
     private fun requestAccount() {
         val requestAccountOnSuccess: (String) -> Unit = {
-            val address = "${it.substring(0, 6)}...${it.substring(it.length - 6, it.length)}"
-            binding.connectButton.text = address
+            binding.connectButton.text = it.shortenAddress()
             viewModel.currentAddress = it
         }
 

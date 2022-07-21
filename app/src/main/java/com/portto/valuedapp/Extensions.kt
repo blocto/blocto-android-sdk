@@ -10,6 +10,7 @@ import androidx.core.widget.doOnTextChanged
 import com.github.razir.progressbutton.DrawableButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
+import com.portto.sdk.wallet.flow.CompositeSignature
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -35,4 +36,17 @@ fun Button.showLoading() {
 fun Button.hideLoading(text: String) {
     this.hideProgress(text)
     this.isEnabled = true
+}
+
+
+/**
+ * Make the provided address shorter for displaying
+ */
+fun String.shortenAddress(): String = "${substring(0, 6)}...${substring(length - 6, length)}"
+
+/**
+ * Map Flow [CompositeSignature] to string for displaying
+ */
+fun List<CompositeSignature>.mapToString() = joinToString("\n\n") {
+    "Address: ${it.address}\nKey ID: ${it.keyId}\nSignature: ${it.signature}"
 }

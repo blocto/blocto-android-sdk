@@ -131,8 +131,7 @@ class SolanaValueDappActivity : AppCompatActivity() {
         BloctoSDK.solana.requestAccount(
             context = this,
             onSuccess = {
-                val address = "${it.substring(0, 6)}...${it.substring(it.length - 6, it.length)}"
-                binding.connectButton.text = address
+                binding.connectButton.text = it.shortenAddress()
                 currentAddress = it
             },
             onError = {

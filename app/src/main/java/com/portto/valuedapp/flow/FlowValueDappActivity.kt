@@ -19,6 +19,8 @@ import com.portto.valuedapp.Config
 import com.portto.valuedapp.R
 import com.portto.valuedapp.databinding.ActivityFlowValueDappBinding
 import com.portto.valuedapp.databinding.LayoutSignMessageBinding
+import com.portto.valuedapp.mapToString
+import com.portto.valuedapp.shortenAddress
 
 class FlowValueDappActivity : AppCompatActivity() {
     private lateinit var binding: ActivityFlowValueDappBinding
@@ -78,11 +80,11 @@ class FlowValueDappActivity : AppCompatActivity() {
                 binding.connectButton.setOnClickListener { logIn() }
                 binding.showAccountProofDataButton.isVisible = false
             } else {
-                binding.connectButton.text = data.shortenAddress
+                binding.connectButton.text = data.address.shortenAddress()
                 binding.connectButton.setOnClickListener { logOut() }
                 binding.showAccountProofDataButton.isVisible = true
                 binding.showAccountProofDataButton.setOnClickListener {
-                    showAccountProofDataDialog(data.signaturesDisplay)
+                    showAccountProofDataDialog(data.signatures.mapToString())
                 }
             }
         }

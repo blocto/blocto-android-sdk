@@ -10,10 +10,4 @@ data class AccountProofData(
     // Array of composite signatures
     val signatures: List<CompositeSignature>
 ) {
-    val shortenAddress =
-        "${address.substring(0, 6)}...${address.substring(address.length - 6, address.length)}"
-
-    val signaturesDisplay = signatures.joinToString("\n\n") {
-        "Address: ${it.address}\nKey ID: ${it.keyId}\nSignature: ${it.signature}"
-    }
 }
