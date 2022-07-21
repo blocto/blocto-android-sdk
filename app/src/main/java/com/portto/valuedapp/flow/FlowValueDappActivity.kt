@@ -1,15 +1,22 @@
 package com.portto.valuedapp.flow
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.portto.sdk.core.BloctoSDK
 import com.portto.sdk.flow.flow
 import com.portto.valuedapp.Config
+import com.portto.valuedapp.R
 import com.portto.valuedapp.databinding.ActivityFlowValueDappBinding
 import com.portto.valuedapp.databinding.LayoutSignMessageBinding
 
@@ -65,19 +72,23 @@ class FlowValueDappActivity : AppCompatActivity() {
         }
 
         // Update address label and Connect button
-        accountProofData.observe(lifecycleOwner) {
-            if (it == null) {
-                binding.connectButton.text = "Log in"
+        accountProofData.observe(lifecycleOwner) { data ->
+            if (data == null) {
+                binding.connectButton.text = getString(R.string.button_connect)
                 binding.connectButton.setOnClickListener { logIn() }
-                binding.currentAddress.text = ""
+                binding.showAccountProofDataButton.isVisible = false
             } else {
-                binding.connectButton.text = "Log out"
+                binding.connectButton.text = data.shortenAddress
                 binding.connectButton.setOnClickListener { logOut() }
-                binding.currentAddress.text = it.address
+                binding.showAccountProofDataButton.isVisible = true
+                binding.showAccountProofDataButton.setOnClickListener {
+                    showAccountProofDataDialog(data.signaturesDisplay)
+                }
             }
         }
 
-        errorMsg.observe(lifecycleOwner) {
+        errorMsg.observe(lifecycleOwner)
+        {
             it?.let {
                 Snackbar.make(binding.container, it, Snackbar.LENGTH_SHORT).show()
             }
@@ -124,6 +135,24 @@ class FlowValueDappActivity : AppCompatActivity() {
 //                signMsgBinding.signature.isVisible = false
 //                viewModel.showError(it)
 //            })
+    }
+
+    private fun showAccountProofDataDialog(signatures: String) {
+        MaterialAlertDialogBuilder(this@FlowValueDappActivity)
+            .setTitle("Composite Signatures")
+            .setMessage(signatures)
+            .setPositiveButton("Copy") { dialog, _ ->
+                val clipboard = ContextCompat.getSystemService(
+                    this@FlowValueDappActivity,
+                    ClipboardManager::class.java
+                )
+                val clip = ClipData.newPlainText("signatures", signatures)
+                clipboard?.setPrimaryClip(clip)
+                Toast.makeText(this, "Copied!", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }.setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }.show()
     }
 
     private fun openExplorer(txHash: String) {

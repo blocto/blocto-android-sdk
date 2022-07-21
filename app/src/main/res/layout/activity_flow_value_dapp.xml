@@ -44,28 +44,23 @@
             </com.google.android.material.textfield.TextInputLayout>
 
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/connect_button"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="end"
                 android:layout_marginTop="16dp"
-                android:orientation="horizontal">
+                android:text="@string/button_connect"
+                android:textAllCaps="false" />
 
-                <TextView
-                    android:id="@+id/current_address"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    tools:text="0x123456" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/connect_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="@string/button_connect"
-                    android:textAllCaps="false" />
-            </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/show_account_proof_data_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:layout_marginTop="8dp"
+                android:text="@string/flow_button_show_account_proof_data"
+                android:textAllCaps="false" />
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
