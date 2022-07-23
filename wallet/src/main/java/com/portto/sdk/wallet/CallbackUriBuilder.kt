@@ -1,6 +1,7 @@
 package com.portto.sdk.wallet
 
 import android.net.Uri
+import com.portto.sdk.wallet.flow.CompositeSignature
 
 object CallbackUriBuilder {
 
@@ -11,7 +12,12 @@ object CallbackUriBuilder {
             .appendQueryParameter(Const.KEY_REQUEST_ID, callback.requestId)
 
         when (callback) {
-            is Callback.Authentication -> builder.appendAuthnQueryParameters(callback)
+            is Callback.FlowAuthenticate -> {
+                builder.appendQueryParameter(Const.KEY_ADDRESS, callback.address)
+                builder.appendCompositeSignatures(Const.KEY_ACCOUNT_PROOF, callback.signatures)
+            }
+            is Callback.FlowSignMessage ->
+                builder.appendCompositeSignatures(Const.KEY_USER_SIGNATURE, callback.signatures)
             is Callback.RequestAccount ->
                 builder.appendQueryParameter(Const.KEY_ADDRESS, callback.address)
             is Callback.SignAndSendTransaction ->
@@ -23,24 +29,31 @@ object CallbackUriBuilder {
             is Callback.Error ->
                 builder.appendQueryParameter(Const.KEY_ERROR, callback.error)
         }
-
         return builder.build()
     }
 
-    private fun Uri.Builder.appendAuthnQueryParameters(callback: Callback.Authentication) {
-        appendQueryParameter(Const.KEY_ADDRESS, callback.address)
-
-        callback.signatures.forEachIndexed { index, compositeSignature ->
+    /**
+     * Append flow query parameter (composite signature)
+     * including address, keyId and signature
+     *
+     * @param key [Const.KEY_USER_SIGNATURE] or [Const.KEY_ACCOUNT_PROOF]
+     * @param signatures list of [CompositeSignature]
+     */
+    private fun Uri.Builder.appendCompositeSignatures(
+        key: String,
+        signatures: List<CompositeSignature>
+    ) {
+        signatures.forEachIndexed { index, compositeSignature ->
             appendQueryParameter(
-                "${Const.KEY_ACCOUNT_PROOF}[$index][${Const.KEY_ADDRESS}]",
+                "${key}[$index][${Const.KEY_ADDRESS}]",
                 compositeSignature.address
             )
             appendQueryParameter(
-                "${Const.KEY_ACCOUNT_PROOF}[$index][${Const.KEY_KEY_ID}]",
+                "${key}[$index][${Const.KEY_KEY_ID}]",
                 compositeSignature.keyId
             )
             appendQueryParameter(
-                "${Const.KEY_ACCOUNT_PROOF}[$index][${Const.KEY_SIGNATURE}]",
+                "${key}[$index][${Const.KEY_SIGNATURE}]",
                 compositeSignature.signature
             )
         }

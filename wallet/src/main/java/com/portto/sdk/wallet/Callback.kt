@@ -4,9 +4,14 @@ import com.portto.sdk.wallet.flow.CompositeSignature
 
 sealed class Callback(open val requestId: String) {
 
-    data class Authentication(
+    data class FlowAuthenticate(
         override val requestId: String,
         val address: String,
+        val signatures: List<CompositeSignature>
+    ) : Callback(requestId)
+
+    data class FlowSignMessage(
+        override val requestId: String,
         val signatures: List<CompositeSignature>
     ) : Callback(requestId)
 

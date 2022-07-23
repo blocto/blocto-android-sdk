@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -123,20 +124,21 @@ class FlowValueDappActivity : AppCompatActivity() {
             return
         }
 
-//        BloctoSDK.flow.signMessage(
-//            context = this,
-//            fromAddress = address,
-//            signType = SignTypeFlow.USER_SIGNATURE,
-//            message = msg,
-//            onSuccess = {
-//                signMsgBinding.signature.text = it
-//                signMsgBinding.signature.isVisible = true
-//            },
-//            onError = {
-//                signMsgBinding.signature.text = ""
-//                signMsgBinding.signature.isVisible = false
-//                viewModel.showError(it)
-//            })
+        BloctoSDK.flow.signUserMessage(
+            context = this,
+            address = address,
+            message = msg,
+            onSuccess = {
+                signMsgBinding.signature.text = it.joinToString { composite ->
+                    "Address: ${composite.address}\nKeyId: ${composite.keyId}\nSignature: ${composite.signature}"
+                }
+                signMsgBinding.signature.isVisible = true
+            },
+            onError = {
+                signMsgBinding.signature.text = ""
+                signMsgBinding.signature.isVisible = false
+                viewModel.showError(it)
+            })
     }
 
     private fun showAccountProofDataDialog(signatures: String) {

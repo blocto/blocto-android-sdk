@@ -40,6 +40,7 @@ sealed class ParseResult {
 
     /**
      * Flow authn
+     * @since 0.3.0
      */
     data class Authentication(
         val appId: String,
@@ -47,6 +48,18 @@ sealed class ParseResult {
         val blockchain: String,
         val flowAppId: String,
         val flowNonce: String,
+    ) : ParseResult()
+
+    /**
+     * Flow sign message
+     * @since 0.3.0
+     */
+    data class UserSignatures(
+        val appId: String,
+        val requestId: String,
+        val blockchain: String,
+        val fromAddress: String,
+        val message: String,
     ) : ParseResult()
 
     object Error : ParseResult()

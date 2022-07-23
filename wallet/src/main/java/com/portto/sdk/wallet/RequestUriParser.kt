@@ -91,7 +91,7 @@ object RequestUriParser {
                     message = message
                 )
             }
-            METHOD_AUTHN -> {
+            METHOD_FLOW_AUTHN -> {
                 val nonce = uri.getQueryParameter(Const.KEY_FLOW_NONCE)
                 val appIdentifier = uri.getQueryParameter(Const.KEY_FLOW_APP_ID)
                 if (nonce == null || appIdentifier == null) return ParseResult.Error
@@ -101,6 +101,18 @@ object RequestUriParser {
                     blockchain = blockchain,
                     flowAppId = appIdentifier,
                     flowNonce = nonce,
+                )
+            }
+            METHOD_FLOW_SIGN_MESSAGE -> {
+                val fromAddress = uri.getQueryParameter(Const.KEY_FROM)
+                val message = uri.getQueryParameter(Const.KEY_MESSAGE)
+                if (fromAddress == null || message == null) return ParseResult.Error
+                return ParseResult.UserSignatures(
+                    appId = appId,
+                    requestId = requestId,
+                    blockchain = blockchain,
+                    fromAddress = fromAddress,
+                    message = message
                 )
             }
             else -> return ParseResult.Error
