@@ -6,9 +6,16 @@ import com.portto.sdk.core.method.Method
 import com.portto.sdk.flow.parse
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.Const
-import com.portto.sdk.wallet.METHOD_AUTHN
+import com.portto.sdk.wallet.METHOD_FLOW_AUTHN
 import com.portto.sdk.wallet.flow.AccountProofData
 
+/**
+ * Flow authentication
+ * If the authentication is success, the callback includes [AccountProofData]
+ *
+ * @param flowAppId the app identifier required by Flow
+ * @param flowNonce nonce required by Flow
+ */
 class AuthenticateMethod(
     private val flowAppId: String,
     private val flowNonce: String,
@@ -18,25 +25,27 @@ class AuthenticateMethod(
 ) : Method<AccountProofData>(blockchain, onSuccess, onError) {
 
     override val name: String
-        get() = METHOD_AUTHN
+        get() = METHOD_FLOW_AUTHN
 
     override fun handleCallback(uri: Uri) {
-        val result = uri.parse()
-        if (result != null) {
-            val (address, signatures) = result
-            if (address.isEmpty() || signatures.isEmpty()) {
-                onError(BloctoSDKError.INVALID_RESPONSE)
-                return
-            }
-            onSuccess(
-                AccountProofData(
-                    flowAppId = flowAppId,
-                    nonce = flowNonce,
-                    address = address,
-                    signatures = signatures
-                )
+        val address = uri.getQueryParameter(Const.KEY_ADDRESS)
+        if (address.isNullOrEmpty()) {
+            onError(BloctoSDKError.INVALID_RESPONSE)
+            return
+        }
+        val signatures = uri.parse(name, address)
+        if (signatures.isNullOrEmpty()) {
+            onError(BloctoSDKError.INVALID_RESPONSE)
+            return
+        }
+        onSuccess(
+            AccountProofData(
+                flowAppId = flowAppId,
+                nonce = flowNonce,
+                address = address,
+                signatures = signatures
             )
-        } else onError(BloctoSDKError.INVALID_RESPONSE)
+        )
     }
 
     override fun encodeToUri(authority: String, appId: String, requestId: String): Uri.Builder {
