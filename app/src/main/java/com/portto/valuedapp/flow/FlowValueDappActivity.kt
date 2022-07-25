@@ -5,7 +5,6 @@ import android.content.ClipboardManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -73,8 +72,6 @@ class FlowValueDappActivity : AppCompatActivity() {
         currentEnv.observe(lifecycleOwner) {
             // Init SDK with updated env
             BloctoSDK.init(appId = it.appId, debug = it == FlowEnv.TESTNET)
-            // Reset UI
-            // TODO: reset UI
         }
 
         // Update address label and Connect button
@@ -82,25 +79,25 @@ class FlowValueDappActivity : AppCompatActivity() {
             if (data == null) {
                 binding.connectButton.text = getString(R.string.button_connect)
                 binding.connectButton.setOnClickListener { logIn() }
-                binding.accountProofData.isVisible = false
+                binding.showAccountProofDataButton.isVisible = false
             } else {
                 binding.connectButton.text = data.address.shortenAddress()
                 binding.connectButton.setOnClickListener { logOut() }
-                binding.accountProofData.isVisible = true
-                val signaturesString = data.signatures.mapToString()
-                binding.accountProofData.text = signaturesString
-                binding.accountProofData.setOnClickListener { copyToClipboard(signaturesString) }
+                binding.showAccountProofDataButton.isVisible = true
+                binding.showAccountProofDataButton.setOnClickListener {
+                    showCompositeSignaturesDialog(data.signatures.mapToString())
+                }
             }
         }
 
         userSignatureData.observe(lifecycleOwner) { data ->
             if (data == null) {
-                signMsgBinding.signature.isVisible = false
+                signMsgBinding.showSignatureButton.isEnabled = false
             } else {
-                signMsgBinding.signature.isVisible = true
-                val signaturesString = data.mapToString()
-                signMsgBinding.signature.text = signaturesString
-                signMsgBinding.signature.setOnClickListener { copyToClipboard(signaturesString) }
+                signMsgBinding.showSignatureButton.isEnabled = true
+                signMsgBinding.showSignatureButton.setOnClickListener {
+                    showCompositeSignaturesDialog(data.mapToString())
+                }
             }
         }
 
@@ -146,12 +143,25 @@ class FlowValueDappActivity : AppCompatActivity() {
             onError = { viewModel.setErrorMessage(it) })
     }
 
+    private fun showCompositeSignaturesDialog(message: String) {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.title_composite_signatures)
+            .setMessage(message)
+            .setPositiveButton("Copy") { dialog, _ ->
+                copyToClipboard(message)
+                dialog.dismiss()
+            }.setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }.show()
+    }
+
+    /**
+     * Copy the composite signatures to clipboard for verifying
+     */
     private fun copyToClipboard(message: String) {
         val clipboard = ContextCompat.getSystemService(
-            this@FlowValueDappActivity,
-            ClipboardManager::class.java
+            this@FlowValueDappActivity, ClipboardManager::class.java
         )
-        clipboard?.clearPrimaryClip()
         val clip = ClipData.newPlainText("Flow Signatures", message)
         clipboard?.setPrimaryClip(clip)
         Toast.makeText(this, "Copied!", Toast.LENGTH_SHORT).show()

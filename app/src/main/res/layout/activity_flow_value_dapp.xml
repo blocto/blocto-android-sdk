@@ -43,7 +43,6 @@
                     tools:ignore="labelFor" />
             </com.google.android.material.textfield.TextInputLayout>
 
-
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/connect_button"
                 android:layout_width="wrap_content"
@@ -53,14 +52,14 @@
                 android:text="@string/button_connect"
                 android:textAllCaps="false" />
 
-            <TextView
-                android:id="@+id/account_proof_data"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/show_account_proof_data_button"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginTop="8dp"
-                android:background="?selectableItemBackground"
-                tools:text="kdsakdaodkasod" />
+                android:text="@string/button_flow_show_account_proof_data"
+                android:textAllCaps="false" />
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
