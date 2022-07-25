@@ -55,7 +55,10 @@ class FlowValueDappActivity : AppCompatActivity() {
             )
             setAdapter(envAdapter)
             setText(viewModel.envs.first().value, false)
-            setOnItemClickListener { _, _, pos, _ -> viewModel.setEnv(viewModel.envs[pos]) }
+            setOnItemClickListener { _, _, pos, _ ->
+                viewModel.reset()
+                viewModel.setEnv(viewModel.envs[pos])
+            }
         }
     }
 
@@ -79,14 +82,25 @@ class FlowValueDappActivity : AppCompatActivity() {
             if (data == null) {
                 binding.connectButton.text = getString(R.string.button_connect)
                 binding.connectButton.setOnClickListener { logIn() }
-                binding.showAccountProofDataButton.isVisible = false
+                binding.accountProofData.isVisible = false
             } else {
                 binding.connectButton.text = data.address.shortenAddress()
                 binding.connectButton.setOnClickListener { logOut() }
-                binding.showAccountProofDataButton.isVisible = true
-                binding.showAccountProofDataButton.setOnClickListener {
-                    showAccountProofDataDialog(data.signatures.mapToString())
-                }
+                binding.accountProofData.isVisible = true
+                val signaturesString = data.signatures.mapToString()
+                binding.accountProofData.text = signaturesString
+                binding.accountProofData.setOnClickListener { copyToClipboard(signaturesString) }
+            }
+        }
+
+        userSignatureData.observe(lifecycleOwner) { data ->
+            if (data == null) {
+                signMsgBinding.signature.isVisible = false
+            } else {
+                signMsgBinding.signature.isVisible = true
+                val signaturesString = data.mapToString()
+                signMsgBinding.signature.text = signaturesString
+                signMsgBinding.signature.setOnClickListener { copyToClipboard(signaturesString) }
             }
         }
 
@@ -104,23 +118,23 @@ class FlowValueDappActivity : AppCompatActivity() {
             flowAppId = Config.FLOW_APP_IDENTIFIER,
             flowNonce = Config.FLOW_NONCE,
             onSuccess = { viewModel.setAccountProofData(it) },
-            onError = { viewModel.showError(it) })
+            onError = { viewModel.setErrorMessage(it) })
     }
 
     private fun logOut() {
-        viewModel.setAccountProofData(null)
+        viewModel.reset()
     }
 
     private fun signMessage(inputMsg: String?) {
         val address = viewModel.accountProofData.value?.address
         if (address == null) {
-            viewModel.showError("wallet not connected")
+            viewModel.setErrorMessage("wallet not connected")
             return
         }
 
         val msg = inputMsg?.trim()
         if (msg.isNullOrBlank()) {
-            viewModel.showError("empty message")
+            viewModel.setErrorMessage("empty message")
             return
         }
 
@@ -128,35 +142,19 @@ class FlowValueDappActivity : AppCompatActivity() {
             context = this,
             address = address,
             message = msg,
-            onSuccess = {
-                signMsgBinding.signature.text = it.joinToString { composite ->
-                    "Address: ${composite.address}\nKeyId: ${composite.keyId}\nSignature: ${composite.signature}"
-                }
-                signMsgBinding.signature.isVisible = true
-            },
-            onError = {
-                signMsgBinding.signature.text = ""
-                signMsgBinding.signature.isVisible = false
-                viewModel.showError(it)
-            })
+            onSuccess = { viewModel.setUserSignatureData(it) },
+            onError = { viewModel.setErrorMessage(it) })
     }
 
-    private fun showAccountProofDataDialog(signatures: String) {
-        MaterialAlertDialogBuilder(this@FlowValueDappActivity)
-            .setTitle("Composite Signatures")
-            .setMessage(signatures)
-            .setPositiveButton("Copy") { dialog, _ ->
-                val clipboard = ContextCompat.getSystemService(
-                    this@FlowValueDappActivity,
-                    ClipboardManager::class.java
-                )
-                val clip = ClipData.newPlainText("signatures", signatures)
-                clipboard?.setPrimaryClip(clip)
-                Toast.makeText(this, "Copied!", Toast.LENGTH_SHORT).show()
-                dialog.dismiss()
-            }.setNegativeButton("Cancel") { dialog, _ ->
-                dialog.dismiss()
-            }.show()
+    private fun copyToClipboard(message: String) {
+        val clipboard = ContextCompat.getSystemService(
+            this@FlowValueDappActivity,
+            ClipboardManager::class.java
+        )
+        clipboard?.clearPrimaryClip()
+        val clip = ClipData.newPlainText("Flow Signatures", message)
+        clipboard?.setPrimaryClip(clip)
+        Toast.makeText(this, "Copied!", Toast.LENGTH_SHORT).show()
     }
 
     private fun openExplorer(txHash: String) {

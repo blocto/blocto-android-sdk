@@ -24,5 +24,4 @@
 
     <!-- Flow -->
     <string name="flow_dapp_name">Flow Value Dapp</string>
-    <string name="flow_button_show_account_proof_data">Show account proof data</string>
 </resources>
