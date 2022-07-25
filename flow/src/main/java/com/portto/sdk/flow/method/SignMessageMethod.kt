@@ -7,9 +7,17 @@ import com.portto.sdk.flow.parse
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.Const
 import com.portto.sdk.wallet.METHOD_FLOW_SIGN_MESSAGE
-import com.portto.sdk.wallet.METHOD_SIGN_MESSAGE
 import com.portto.sdk.wallet.flow.CompositeSignature
 
+/**
+ * Flow - user_signatures
+ * Sign the specified message by Blocto app
+ * @param fromAddress the account
+ * @param message the plain text to sign
+ * @param blockchain Flow exclusive
+ * @param onSuccess the callback that includes a list of [CompositeSignature]
+ * @param onError the callback that includes [BloctoSDKError]
+ */
 class SignMessageMethod(
     private val fromAddress: String,
     private val message: String,

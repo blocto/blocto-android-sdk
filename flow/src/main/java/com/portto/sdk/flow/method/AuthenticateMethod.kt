@@ -10,11 +10,13 @@ import com.portto.sdk.wallet.METHOD_FLOW_AUTHN
 import com.portto.sdk.wallet.flow.AccountProofData
 
 /**
- * Flow authentication
- * If the authentication is success, the callback includes [AccountProofData]
- *
+ * Flow - authn
+ * Allow to authenticate with Blocto app
  * @param flowAppId the app identifier required by Flow
  * @param flowNonce nonce required by Flow
+ * @param blockchain Flow exclusive
+ * @param onSuccess the callback that includes [AccountProofData]
+ * @param onError the callback that includes [BloctoSDKError]
  */
 class AuthenticateMethod(
     private val flowAppId: String,
