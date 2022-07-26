@@ -51,7 +51,7 @@ sealed class ParseResult {
     ) : ParseResult()
 
     /**
-     * Flow sign message
+     * Flow user_signature
      * @since 0.3.0
      */
     data class UserSignatures(
