@@ -46,8 +46,8 @@ sealed class ParseResult {
         val appId: String,
         val requestId: String,
         val blockchain: String,
-        val flowAppId: String,
-        val flowNonce: String,
+        val flowAppId: String?,
+        val flowNonce: String?,
     ) : ParseResult()
 
     /**

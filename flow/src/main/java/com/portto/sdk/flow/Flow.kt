@@ -21,8 +21,8 @@ class Flow : Chain {
      */
     fun authenticate(
         context: Context,
-        flowAppId: String,
-        flowNonce: String,
+        flowAppId: String?,
+        flowNonce: String?,
         onSuccess: (AccountProofData) -> Unit,
         onError: (BloctoSDKError) -> Unit
     ) {

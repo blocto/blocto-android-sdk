@@ -12,15 +12,15 @@ import com.portto.sdk.wallet.flow.AccountProofData
 /**
  * Flow - authn
  * Allow to authenticate with Blocto app
- * @param flowAppId the app identifier required by Flow
- * @param flowNonce nonce required by Flow
+ * @param flowAppId optional; flow app identifier required by account proof
+ * @param flowNonce optional; nonce required by account proof
  * @param blockchain Flow exclusive
  * @param onSuccess the callback that includes [AccountProofData]
  * @param onError the callback that includes [BloctoSDKError]
  */
 class AuthenticateMethod(
-    private val flowAppId: String,
-    private val flowNonce: String,
+    private val flowAppId: String?,
+    private val flowNonce: String?,
     blockchain: Blockchain = Blockchain.FLOW,
     onSuccess: (AccountProofData) -> Unit,
     onError: (BloctoSDKError) -> Unit
@@ -36,7 +36,8 @@ class AuthenticateMethod(
             return
         }
         val signatures = uri.parse(name, address)
-        if (signatures.isNullOrEmpty()) {
+        // If flow app id and nonce are provided, signatures shall not be null or empty
+        if ((flowAppId != null && flowNonce != null) && signatures.isNullOrEmpty()) {
             onError(BloctoSDKError.INVALID_RESPONSE)
             return
         }
@@ -52,7 +53,9 @@ class AuthenticateMethod(
 
     override fun encodeToUri(authority: String, appId: String, requestId: String): Uri.Builder {
         return super.encodeToUri(authority, appId, requestId)
-            .appendQueryParameter(Const.KEY_FLOW_APP_ID, flowAppId)
-            .appendQueryParameter(Const.KEY_FLOW_NONCE, flowNonce)
+            .apply {
+                flowAppId?.let { appendQueryParameter(Const.KEY_FLOW_APP_ID, it) }
+                flowNonce?.let { appendQueryParameter(Const.KEY_FLOW_NONCE, it) }
+            }
     }
 }

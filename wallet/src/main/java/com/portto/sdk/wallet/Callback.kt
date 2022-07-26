@@ -7,7 +7,7 @@ sealed class Callback(open val requestId: String) {
     data class FlowAuthenticate(
         override val requestId: String,
         val address: String,
-        val signatures: List<CompositeSignature>
+        val signatures: List<CompositeSignature>?
     ) : Callback(requestId)
 
     data class FlowSignMessage(

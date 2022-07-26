@@ -41,9 +41,9 @@ object CallbackUriBuilder {
      */
     private fun Uri.Builder.appendCompositeSignatures(
         key: String,
-        signatures: List<CompositeSignature>
+        signatures: List<CompositeSignature>?
     ) {
-        signatures.forEachIndexed { index, compositeSignature ->
+        signatures?.forEachIndexed { index, compositeSignature ->
             appendQueryParameter(
                 "${key}[$index][${Const.KEY_ADDRESS}]",
                 compositeSignature.address

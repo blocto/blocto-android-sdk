@@ -74,18 +74,24 @@ class FlowValueDappActivity : AppCompatActivity() {
             BloctoSDK.init(appId = it.appId, debug = it == FlowEnv.TESTNET)
         }
 
-        // Update address label and Connect button
-        accountProofData.observe(lifecycleOwner) { data ->
-            if (data == null) {
+        // Update Connect button to address once authenticated
+        address.observe(lifecycleOwner) {
+            if (it == null) {
                 binding.connectButton.text = getString(R.string.button_connect)
-                binding.connectButton.setOnClickListener { logIn() }
+                binding.connectButton.setOnClickListener { showAuthenticationDialog() }
+            } else {
+                binding.connectButton.text = it.shortenAddress()
+                binding.connectButton.setOnClickListener { logOut() }
+            }
+        }
+
+        accountProofSignatures.observe(lifecycleOwner) { signatures ->
+            if (signatures == null) {
                 binding.showAccountProofDataButton.isVisible = false
             } else {
-                binding.connectButton.text = data.address.shortenAddress()
-                binding.connectButton.setOnClickListener { logOut() }
                 binding.showAccountProofDataButton.isVisible = true
                 binding.showAccountProofDataButton.setOnClickListener {
-                    showCompositeSignaturesDialog(data.signatures.mapToString())
+                    showCompositeSignaturesDialog(signatures.mapToString())
                 }
             }
         }
@@ -109,11 +115,11 @@ class FlowValueDappActivity : AppCompatActivity() {
         }
     }
 
-    private fun logIn() {
+    private fun logIn(withAccountProof: Boolean) {
         BloctoSDK.flow.authenticate(
             context = this,
-            flowAppId = Config.FLOW_APP_IDENTIFIER,
-            flowNonce = Config.FLOW_NONCE,
+            flowAppId = if (withAccountProof) Config.FLOW_APP_IDENTIFIER else null,
+            flowNonce = if (withAccountProof) Config.FLOW_NONCE else null,
             onSuccess = { viewModel.setAccountProofData(it) },
             onError = { viewModel.setErrorMessage(it) })
     }
@@ -123,7 +129,7 @@ class FlowValueDappActivity : AppCompatActivity() {
     }
 
     private fun signMessage(inputMsg: String?) {
-        val address = viewModel.accountProofData.value?.address
+        val address = viewModel.address.value
         if (address == null) {
             viewModel.setErrorMessage("wallet not connected")
             return
@@ -141,6 +147,17 @@ class FlowValueDappActivity : AppCompatActivity() {
             message = msg,
             onSuccess = { viewModel.setUserSignatureData(it) },
             onError = { viewModel.setErrorMessage(it) })
+    }
+
+    private fun showAuthenticationDialog() {
+        val items = arrayOf("With Account Proof", "Without Account Proof")
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Authentication")
+            .setItems(items) { dialog, which ->
+                logIn(which == 0)
+                dialog.dismiss()
+            }
+            .show()
     }
 
     private fun showCompositeSignaturesDialog(message: String) {

@@ -94,7 +94,6 @@ object RequestUriParser {
             METHOD_FLOW_AUTHN -> {
                 val nonce = uri.getQueryParameter(Const.KEY_FLOW_NONCE)
                 val appIdentifier = uri.getQueryParameter(Const.KEY_FLOW_APP_ID)
-                if (nonce == null || appIdentifier == null) return ParseResult.Error
                 return ParseResult.Authentication(
                     appId = appId,
                     requestId = requestId,

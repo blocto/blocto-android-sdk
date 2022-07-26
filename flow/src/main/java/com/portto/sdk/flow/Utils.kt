@@ -18,6 +18,7 @@ import com.portto.sdk.wallet.flow.CompositeSignature
  *
  * @param method type shall be either [METHOD_FLOW_AUTHN] or [METHOD_FLOW_SIGN_MESSAGE]
  * @param address the address to validate whether the addresses in [CompositeSignature] are identical
+ * @return list of [CompositeSignature]; this can be null when either a parameter is not found or the signature list is empty
  */
 internal fun Uri.parse(method: String, address: String): List<CompositeSignature>? {
     if (method !in setOf(METHOD_FLOW_AUTHN, METHOD_FLOW_SIGN_MESSAGE))
@@ -45,5 +46,5 @@ internal fun Uri.parse(method: String, address: String): List<CompositeSignature
         )
         index++
     }
-    return compositeSignatureList
+    return compositeSignatureList.takeIf { it.isNotEmpty() }
 }
