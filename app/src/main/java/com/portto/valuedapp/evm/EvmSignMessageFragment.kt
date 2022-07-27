@@ -14,7 +14,7 @@ import com.portto.sdk.evm.bnb
 import com.portto.sdk.evm.ethereum
 import com.portto.sdk.evm.polygon
 import com.portto.sdk.wallet.BloctoSDKError
-import com.portto.sdk.wallet.EvmSignType
+import com.portto.sdk.wallet.evm.EvmSignType
 import com.portto.valuedapp.R
 import com.portto.valuedapp.databinding.FragmentEvmSignMessageBinding
 import com.portto.valuedapp.hideKeyboard

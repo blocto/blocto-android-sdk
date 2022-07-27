@@ -47,6 +47,15 @@
                 android:textColor="@color/black"
                 android:textSize="20sp" />
 
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/flow_dapp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:padding="16dp"
+                android:text="@string/flow_dapp_name"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.core.widget.NestedScrollView>

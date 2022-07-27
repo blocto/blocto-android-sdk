@@ -19,6 +19,8 @@ import com.portto.solana.web3.Transaction
 import com.portto.solana.web3.programs.SystemProgram
 import com.portto.solana.web3.util.Cluster
 import com.portto.valuedapp.*
+import com.portto.valuedapp.Config.APP_ID_MAINNET
+import com.portto.valuedapp.Config.APP_ID_TESTNET
 import com.portto.valuedapp.databinding.ActivitySolanaValueDappBinding
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -40,12 +42,12 @@ class SolanaValueDappActivity : AppCompatActivity() {
         Env(
             name = "Mainnet Beta",
             cluster = Cluster.MAINNET_BETA,
-            appId = "0896e44c-20fd-443b-b664-d305b52fe8e8"
+            appId = APP_ID_MAINNET
         ),
         Env(
             name = "Devnet",
             cluster = Cluster.DEVNET,
-            appId = "57f397df-263c-4e97-b61f-15b67b9ce285"
+            appId = APP_ID_TESTNET
         )
     )
 
@@ -129,8 +131,7 @@ class SolanaValueDappActivity : AppCompatActivity() {
         BloctoSDK.solana.requestAccount(
             context = this,
             onSuccess = {
-                val address = "${it.substring(0, 6)}...${it.substring(it.length - 6, it.length)}"
-                binding.connectButton.text = address
+                binding.connectButton.text = it.shortenAddress()
                 currentAddress = it
             },
             onError = {

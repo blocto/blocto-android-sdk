@@ -1,4 +1,4 @@
-package com.portto.sdk.wallet
+package com.portto.sdk.wallet.evm
 
 enum class EvmSignType(val type: String) {
     ETH_SIGN("sign"),
