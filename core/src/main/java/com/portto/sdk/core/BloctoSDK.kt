@@ -28,7 +28,7 @@ object BloctoSDK {
     @JvmStatic
     fun send(context: Context, method: Method<*>) {
         val appId = this.appId.takeIf { !it.isNullOrEmpty() } ?: kotlin.run {
-            throw NullPointerException("Need to set app id before use Blocto SDK")
+            throw NullPointerException("App ID is required to use Blocto SDK. Check https://docs.blocto.app/blocto-sdk/register-app-id for more info.")
         }
         val requestId = UUID.randomUUID().toString()
         requestMap[requestId] = method
