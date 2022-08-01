@@ -40,12 +40,12 @@ fun Button.hideLoading(text: String) {
 
 
 /**
- * Make the provided address shorter for displaying
+ * Make the provided address shorter for display
  */
 fun String.shortenAddress(): String = "${substring(0, 6)}...${substring(length - 6, length)}"
 
 /**
- * Map Flow [CompositeSignature] to string for displaying
+ * Map Flow [CompositeSignature] to string for display
  */
 fun List<CompositeSignature>.mapToString() = joinToString("\n\n") {
     "Address: ${it.address}\nKey ID: ${it.keyId}\nSignature: ${it.signature}"

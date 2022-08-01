@@ -107,8 +107,7 @@ class FlowValueDappActivity : AppCompatActivity() {
             }
         }
 
-        errorMsg.observe(lifecycleOwner)
-        {
+        errorMsg.observe(lifecycleOwner) {
             it?.let {
                 Snackbar.make(binding.container, it, Snackbar.LENGTH_SHORT).show()
             }
