@@ -17,14 +17,17 @@ import com.portto.sdk.core.BloctoSDK
 import com.portto.sdk.flow.flow
 import com.portto.valuedapp.Config
 import com.portto.valuedapp.R
+import com.portto.valuedapp.Utils.shortenAddress
 import com.portto.valuedapp.databinding.ActivityFlowValueDappBinding
+import com.portto.valuedapp.databinding.LayoutSetValueBinding
 import com.portto.valuedapp.databinding.LayoutSignMessageBinding
-import com.portto.valuedapp.mapToString
-import com.portto.valuedapp.shortenAddress
+import com.portto.valuedapp.flow.FlowUtils.mapToString
+import timber.log.Timber
 
 class FlowValueDappActivity : AppCompatActivity() {
     private lateinit var binding: ActivityFlowValueDappBinding
     private lateinit var signMsgBinding: LayoutSignMessageBinding
+    private lateinit var setValueBinding: LayoutSetValueBinding
 
     private val viewModel by viewModels<FlowViewModel>()
 
@@ -32,11 +35,14 @@ class FlowValueDappActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityFlowValueDappBinding.inflate(layoutInflater)
         signMsgBinding = LayoutSignMessageBinding.bind(binding.root)
+        setValueBinding = LayoutSetValueBinding.bind(binding.root)
         setContentView(binding.root)
 
         binding.setUpUi()
 
         signMsgBinding.setUpUi()
+
+        setValueBinding.setUpUi()
 
         viewModel.bindUi()
     }
@@ -65,6 +71,10 @@ class FlowValueDappActivity : AppCompatActivity() {
         signButton.setOnClickListener {
             signMessage(input.text?.toString())
         }
+    }
+
+    private fun LayoutSetValueBinding.setUpUi() {
+        setValueButton.setOnClickListener { sendTransaction() }
     }
 
     private fun FlowViewModel.bindUi() {
@@ -112,6 +122,23 @@ class FlowValueDappActivity : AppCompatActivity() {
                 Snackbar.make(binding.container, it, Snackbar.LENGTH_SHORT).show()
             }
         }
+
+        // Navigate to blocto app once the tx is composed
+        sendTxData.observe(lifecycleOwner) { txData ->
+            txData?.let {
+                val address = viewModel.address.value
+                if (address.isNullOrEmpty()) return@observe
+
+                BloctoSDK.flow.sendTransaction(
+                    context = this@FlowValueDappActivity,
+                    address = address,
+                    transaction = txData,
+                    onSuccess = { Timber.d("Tx hash: $it") },
+                    onError = { viewModel.setErrorMessage(it) }
+                )
+                viewModel.resetTxData()
+            }
+        }
     }
 
     private fun logIn(withAccountProof: Boolean) {
@@ -146,6 +173,28 @@ class FlowValueDappActivity : AppCompatActivity() {
             message = msg,
             onSuccess = { viewModel.setUserSignatureData(it) },
             onError = { viewModel.setErrorMessage(it) })
+    }
+
+    private fun sendTransaction() {
+        val address = viewModel.address.value
+        if (address == null) {
+            viewModel.setErrorMessage("wallet not connected")
+            return
+        }
+
+        val env = viewModel.currentEnv.value
+        if (env == null) {
+            viewModel.setErrorMessage("env not set")
+            return
+        }
+
+        val inputText = setValueBinding.valueInput.text?.toString()
+        if (inputText.isNullOrEmpty()) {
+            viewModel.setErrorMessage("Input text is empty")
+            return
+        }
+
+        viewModel.composeTransaction(address, inputText, env == FlowEnv.MAINNET)
     }
 
     private fun showAuthenticationDialog() {

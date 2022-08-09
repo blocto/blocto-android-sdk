@@ -7,6 +7,7 @@ const val METHOD_SIGN_MESSAGE = "sign_message"
 
 const val METHOD_FLOW_AUTHN = "authn"
 const val METHOD_FLOW_SIGN_MESSAGE = "user_signature"
+const val METHOD_FLOW_SEND_TRANSACTION = "flow_send_transaction"
 
 object Const {
 
@@ -45,6 +46,7 @@ object Const {
     const val KEY_KEY_ID = "key_id" // Since 0.3.0 (Flow)
     const val KEY_FLOW_APP_ID = "flow_app_id" // Since 0.3.0 (Flow)
     const val KEY_FLOW_NONCE = "flow_nonce" // Since 0.3.0 (Flow)
+    const val KEY_FLOW_TX = "flow_transaction" // Since 0.3.0 (Flow)
 
 
     fun bloctoAuthority(debug: Boolean): String = if (debug) {

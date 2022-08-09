@@ -23,8 +23,8 @@
             android:id="@+id/value_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="123"
-            android:inputType="number" />
+            android:inputType="number"
+            android:text="123" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -45,13 +45,12 @@
         tools:text="4yXp3W1bz3V8cynyd8rwda81dEvgpCZ5vnSRw5PKjfsoVCGJi1jmDRsMn5haX8knr292XDkZ18pxcXs8kiG1YyKV"
         tools:visibility="visible" />
 
-    
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/set_value_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:enabled="false"
         android:text="@string/button_send_transaction"
         android:textAllCaps="false" />
 
