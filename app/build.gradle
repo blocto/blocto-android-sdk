@@ -64,7 +64,7 @@ dependencies {
         exclude module: 'bcprov-jdk15on'
     }
 
-    implementation("com.nftco:flow-jvm-sdk:$versions.flow_sdk") {
+    implementation("com.github.portto:flow-jvm-sdk:rlp-android-SNAPSHOT") {
         exclude module: 'bcprov-jdk15on'
     }
     implementation("io.grpc:grpc-okhttp:1.47.0")
