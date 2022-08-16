@@ -155,15 +155,10 @@ class FlowValueDappActivity : AppCompatActivity() {
                     context = this@FlowValueDappActivity,
                     address = address,
                     transaction = txData,
-                    onSuccess = {
-                        setValueBinding.setValueButton.hideLoading(getString(R.string.button_send_transaction))
-                        viewModel.setTxHash(it)
-                    },
-                    onError = {
-                        setValueBinding.setValueButton.hideLoading(getString(R.string.button_send_transaction))
-                        viewModel.setErrorMessage(it)
-                    }
+                    onSuccess = { viewModel.setTxHash(it) },
+                    onError = { viewModel.setErrorMessage(it) }
                 )
+                setValueBinding.setValueButton.hideLoading(getString(R.string.button_send_transaction))
                 viewModel.resetTxData()
             }
 
