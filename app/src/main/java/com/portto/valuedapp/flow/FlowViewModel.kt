@@ -9,7 +9,7 @@ import com.nftco.flow.sdk.cadence.UFix64NumberField
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.flow.AccountProofData
 import com.portto.sdk.wallet.flow.CompositeSignature
-import com.portto.valuedapp.Config.FLOW_TRANSACTION_SCRIPT
+import com.portto.valuedapp.Config.getFlowTransactionScript
 import com.portto.valuedapp.flow.FlowUtils.getAccount
 import com.portto.valuedapp.flow.FlowUtils.getLatestBlock
 import kotlinx.coroutines.Dispatchers
@@ -96,7 +96,7 @@ class FlowViewModel : ViewModel() {
                 )
 
                 val transaction = FlowTransaction(
-                    script = FlowScript(FLOW_TRANSACTION_SCRIPT.trim()),
+                    script = FlowScript(getFlowTransactionScript(isMainnet)),
                     arguments = listOf(FlowArgument(UFix64NumberField(inputValue))),
                     referenceBlockId = block.id,
                     gasLimit = 500L,
