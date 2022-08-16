@@ -12,8 +12,8 @@ object Config {
     const val FLOW_NONCE = "75f8587e5bd5f9dcc9909d0dae1f0ac5814458b2ae129620502cb936fde7120a"
 
 
-    private const val SCRIPT_TESTNET_ADDRESS = "0x8320311d63f3b336"
-    private const val SCRIPT_MAINNET_ADDRESS = "0x5a8143da8058740c"
+    private const val SCRIPT_TESTNET_ADDRESS = "0x5a8143da8058740c"
+    private const val SCRIPT_MAINNET_ADDRESS = "0x8320311d63f3b336"
 
     fun getFlowTransactionScript(isMainnet: Boolean = false): String = """
         import ValueDapp from ${if (isMainnet) SCRIPT_MAINNET_ADDRESS else SCRIPT_TESTNET_ADDRESS}
