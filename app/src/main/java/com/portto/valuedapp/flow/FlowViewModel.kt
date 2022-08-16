@@ -9,12 +9,13 @@ import com.nftco.flow.sdk.cadence.UFix64NumberField
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.flow.AccountProofData
 import com.portto.sdk.wallet.flow.CompositeSignature
-import com.portto.valuedapp.Config.getFlowTransactionScript
+import com.portto.valuedapp.Config.getGetValueScript
+import com.portto.valuedapp.Config.getSetValueScript
 import com.portto.valuedapp.flow.FlowUtils.getAccount
 import com.portto.valuedapp.flow.FlowUtils.getLatestBlock
+import com.portto.valuedapp.flow.FlowUtils.sendQuery
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.combineTransform
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class FlowViewModel : ViewModel() {
@@ -37,11 +38,17 @@ class FlowViewModel : ViewModel() {
     private val _userSignatureData = MutableLiveData<List<CompositeSignature>?>(null)
     val userSignatureData: LiveData<List<CompositeSignature>?> get() = _userSignatureData
 
+    // Payload to be sent
     private val _sendTxData = MutableLiveData<String?>(null)
     val sendTxData: LiveData<String?> get() = _sendTxData
 
+    // Transaction hash being sent
     private val _txHash = MutableLiveData<String?>(null)
     val txHash: LiveData<String?> get() = _txHash
+
+    // Value being set in this demo app
+    private val _valueUiState = MutableStateFlow<GetValueUiState>(GetValueUiState.Success(""))
+    val valueUiState: StateFlow<GetValueUiState> = _valueUiState
 
     private val _errorMsg = MutableLiveData<String?>(null)
     val errorMsg: LiveData<String?> get() = _errorMsg
@@ -96,7 +103,7 @@ class FlowViewModel : ViewModel() {
                 )
 
                 val transaction = FlowTransaction(
-                    script = FlowScript(getFlowTransactionScript(isMainnet)),
+                    script = FlowScript(getSetValueScript(isMainnet)),
                     arguments = listOf(FlowArgument(UFix64NumberField(inputValue))),
                     referenceBlockId = block.id,
                     gasLimit = 500L,
@@ -112,7 +119,21 @@ class FlowViewModel : ViewModel() {
         }
     }
 
+    fun getValue(isMainnet: Boolean) {
+        viewModelScope.launch {
+            sendQuery(isMainnet, getGetValueScript(isMainnet))
+                .flowOn(Dispatchers.IO)
+                .catch { _valueUiState.value = GetValueUiState.Failure(it) }
+                .collect { _valueUiState.value = GetValueUiState.Success(it as String) }
+        }
+    }
+
     fun resetTxData() {
         _sendTxData.value = null
     }
+}
+
+sealed class GetValueUiState {
+    class Success(val data: String) : GetValueUiState()
+    class Failure(val exception: Throwable) : GetValueUiState()
 }

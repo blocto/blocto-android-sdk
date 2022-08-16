@@ -3,19 +3,30 @@ package com.portto.valuedapp.flow
 import androidx.annotation.WorkerThread
 import com.nftco.flow.sdk.Flow
 import com.nftco.flow.sdk.FlowAddress
+import com.nftco.flow.sdk.cadence.Field
+import com.nftco.flow.sdk.simpleFlowScript
 import com.portto.sdk.wallet.flow.CompositeSignature
 import kotlinx.coroutines.flow.flow
 
 object FlowUtils {
 
     @WorkerThread
-    fun getAccount(address: String, isMainNet: Boolean) = flow {
-        emit(getFlowApi(isMainNet).getAccountAtLatestBlock(FlowAddress(address)))
+    fun getAccount(address: String, isMainnet: Boolean) = flow {
+        emit(getFlowApi(isMainnet).getAccountAtLatestBlock(FlowAddress(address)))
     }
 
     @WorkerThread
-    fun getLatestBlock(isMainNet: Boolean) = flow {
-        emit(getFlowApi(isMainNet).getLatestBlock(true))
+    fun getLatestBlock(isMainnet: Boolean) = flow {
+        emit(getFlowApi(isMainnet).getLatestBlock(true))
+    }
+
+    @WorkerThread
+    fun sendQuery(isMainnet: Boolean, script: String, arguments: List<Field<*>>? = null) = flow {
+        val result = getFlowApi(isMainnet).simpleFlowScript {
+            script(script)
+            arguments?.forEach { arg(it) }
+        }
+        emit(result.jsonCadence.value)
     }
 
     /**

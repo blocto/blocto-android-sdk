@@ -15,13 +15,27 @@ object Config {
     private const val SCRIPT_TESTNET_ADDRESS = "0x5a8143da8058740c"
     private const val SCRIPT_MAINNET_ADDRESS = "0x8320311d63f3b336"
 
-    fun getFlowTransactionScript(isMainnet: Boolean = false): String = """
+    /**
+     * Sample script for sending transaction
+     */
+    fun getSetValueScript(isMainnet: Boolean = false): String = """
         import ValueDapp from ${if (isMainnet) SCRIPT_MAINNET_ADDRESS else SCRIPT_TESTNET_ADDRESS}
         
         transaction(value: UFix64) {
             prepare(authorizer: AuthAccount) {
                     ValueDapp.setValue(value)
             }
+        }
+    """.trimIndent()
+
+    /**
+     * Sample script for querying
+     */
+    fun getGetValueScript(isMainnet: Boolean = false): String = """
+        import ValueDapp from ${if (isMainnet) SCRIPT_MAINNET_ADDRESS else SCRIPT_TESTNET_ADDRESS}
+        
+        pub fun main(): UFix64 {
+	        return ValueDapp.value
         }
     """.trimIndent()
 }
