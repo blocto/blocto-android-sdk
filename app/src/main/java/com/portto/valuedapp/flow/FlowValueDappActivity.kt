@@ -58,6 +58,11 @@ class FlowValueDappActivity : AppCompatActivity() {
         viewModel.bindUi()
     }
 
+    override fun onPause() {
+        super.onPause()
+        binding.root.clearFocus()
+    }
+
     private fun ActivityFlowValueDappBinding.setUpUi() {
         toolbar.setNavigationOnClickListener {
             onBackPressed()
