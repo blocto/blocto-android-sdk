@@ -40,6 +40,9 @@ class FlowViewModel : ViewModel() {
     private val _sendTxData = MutableLiveData<String?>(null)
     val sendTxData: LiveData<String?> get() = _sendTxData
 
+    private val _txHash = MutableLiveData<String?>(null)
+    val txHash: LiveData<String?> get() = _txHash
+
     private val _errorMsg = MutableLiveData<String?>(null)
     val errorMsg: LiveData<String?> get() = _errorMsg
 
@@ -61,6 +64,7 @@ class FlowViewModel : ViewModel() {
         _address.value = null
         _accountProofSignatures.value = null
         _userSignatureData.value = null
+        _txHash.value = null
     }
 
     fun setErrorMessage(error: BloctoSDKError) {
@@ -70,6 +74,10 @@ class FlowViewModel : ViewModel() {
 
     fun setErrorMessage(message: String) {
         _errorMsg.value = message
+    }
+
+    fun setTxHash(hash: String) {
+        _txHash.value = hash
     }
 
     fun composeTransaction(userAddress: String, inputValue: String, isMainnet: Boolean) {

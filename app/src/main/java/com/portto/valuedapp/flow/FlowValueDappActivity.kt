@@ -22,6 +22,8 @@ import com.portto.valuedapp.databinding.ActivityFlowValueDappBinding
 import com.portto.valuedapp.databinding.LayoutSetValueBinding
 import com.portto.valuedapp.databinding.LayoutSignMessageBinding
 import com.portto.valuedapp.flow.FlowUtils.mapToString
+import com.portto.valuedapp.hideLoading
+import com.portto.valuedapp.showLoading
 import timber.log.Timber
 
 class FlowValueDappActivity : AppCompatActivity() {
@@ -75,6 +77,10 @@ class FlowValueDappActivity : AppCompatActivity() {
 
     private fun LayoutSetValueBinding.setUpUi() {
         setValueButton.setOnClickListener { sendTransaction() }
+        setValueTxHash.setOnClickListener {
+            val txHash = setValueTxHash.text.toString()
+            openExplorer(txHash)
+        }
     }
 
     private fun FlowViewModel.bindUi() {
@@ -133,10 +139,26 @@ class FlowValueDappActivity : AppCompatActivity() {
                     context = this@FlowValueDappActivity,
                     address = address,
                     transaction = txData,
-                    onSuccess = { Timber.d("Tx hash: $it") },
-                    onError = { viewModel.setErrorMessage(it) }
+                    onSuccess = {
+                        setValueBinding.setValueButton.hideLoading(getString(R.string.button_send_transaction))
+                        viewModel.setTxHash(it)
+                    },
+                    onError = {
+                        setValueBinding.setValueButton.hideLoading(getString(R.string.button_send_transaction))
+                        viewModel.setErrorMessage(it)
+                    }
                 )
                 viewModel.resetTxData()
+            }
+        }
+
+        txHash.observe(lifecycleOwner) {
+            if (it.isNullOrEmpty()) {
+                setValueBinding.setValueTxHash.text = ""
+                setValueBinding.setValueTxHash.isVisible = false
+            } else {
+                setValueBinding.setValueTxHash.text = it
+                setValueBinding.setValueTxHash.isVisible = true
             }
         }
     }
@@ -193,7 +215,7 @@ class FlowValueDappActivity : AppCompatActivity() {
             viewModel.setErrorMessage("Input text is empty")
             return
         }
-
+        setValueBinding.setValueButton.showLoading()
         viewModel.composeTransaction(address, inputText, env == FlowEnv.MAINNET)
     }
 
