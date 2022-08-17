@@ -10,6 +10,8 @@ import com.nftco.flow.sdk.cadence.UFix64NumberField
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.flow.AccountProofData
 import com.portto.sdk.wallet.flow.CompositeSignature
+import com.portto.valuedapp.Config.FLOW_MAINNET_PAYER_ADDRESS
+import com.portto.valuedapp.Config.FLOW_TESTNET_PAYER_ADDRESS
 import com.portto.valuedapp.Config.getGetValueScript
 import com.portto.valuedapp.Config.getSetValueScript
 import com.portto.valuedapp.flow.FlowUtils.getAccount
@@ -109,7 +111,7 @@ class FlowViewModel : ViewModel() {
                     referenceBlockId = block.id,
                     gasLimit = 500L,
                     proposalKey = proposalKey,
-                    payerAddress = FlowAddress("f086a545ce3c552d"),
+                    payerAddress = FlowAddress(if (isMainnet) FLOW_MAINNET_PAYER_ADDRESS else FLOW_TESTNET_PAYER_ADDRESS),
                     authorizers = listOf(FlowAddress(userAddress))
                 )
 
