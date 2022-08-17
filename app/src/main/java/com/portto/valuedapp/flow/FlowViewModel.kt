@@ -6,12 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nftco.flow.sdk.*
 import com.nftco.flow.sdk.cadence.JsonCadenceBuilder
-import com.nftco.flow.sdk.cadence.UFix64NumberField
+import com.portto.sdk.core.BloctoSDK
+import com.portto.sdk.flow.flow
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.flow.AccountProofData
 import com.portto.sdk.wallet.flow.CompositeSignature
-import com.portto.valuedapp.Config.FLOW_MAINNET_PAYER_ADDRESS
-import com.portto.valuedapp.Config.FLOW_TESTNET_PAYER_ADDRESS
 import com.portto.valuedapp.Config.getGetValueScript
 import com.portto.valuedapp.Config.getSetValueScript
 import com.portto.valuedapp.flow.FlowUtils.getAccount
@@ -105,13 +104,15 @@ class FlowViewModel : ViewModel() {
                     sequenceNumber = cosignerKey.sequenceNumber.toLong(),
                 )
 
+                val feePayer = BloctoSDK.flow.getFeePayerAddress()
+
                 val transaction = FlowTransaction(
                     script = FlowScript(getSetValueScript(isMainnet)),
                     arguments = listOf(FlowArgument(JsonCadenceBuilder().ufix64(inputValue))),
                     referenceBlockId = block.id,
                     gasLimit = 500L,
                     proposalKey = proposalKey,
-                    payerAddress = FlowAddress(if (isMainnet) FLOW_MAINNET_PAYER_ADDRESS else FLOW_TESTNET_PAYER_ADDRESS),
+                    payerAddress = FlowAddress(feePayer),
                     authorizers = listOf(FlowAddress(userAddress))
                 )
 
