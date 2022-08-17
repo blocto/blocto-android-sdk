@@ -64,7 +64,7 @@ dependencies {
         exclude module: 'bcprov-jdk15on'
     }
 
-    implementation("com.github.portto:flow-jvm-sdk:rlp-android-SNAPSHOT") {
+    implementation("com.github.portto:flow-jvm-sdk:main-SNAPSHOT") {
         exclude module: 'bcprov-jdk15on'
     }
     implementation("io.grpc:grpc-okhttp:1.47.0")
