@@ -75,6 +75,10 @@ class Flow : Chain {
         BloctoSDK.send(context, method)
     }
 
+    /**
+     * Get Blocto fee payer address to compose transaction
+     * @return fee payer address
+     */
     @WorkerThread
     fun getFeePayerAddress(): String = BloctoApi.getFeePayer()
 }
