@@ -1,6 +1,7 @@
 package com.portto.sdk.flow
 
 import android.content.Context
+import androidx.annotation.WorkerThread
 import com.portto.sdk.core.Blockchain
 import com.portto.sdk.core.BloctoSDK
 import com.portto.sdk.core.Chain
@@ -73,4 +74,7 @@ class Flow : Chain {
         )
         BloctoSDK.send(context, method)
     }
+
+    @WorkerThread
+    fun getFeePayerAddress(): String = BloctoApi.getFeePayer()
 }
