@@ -3,7 +3,6 @@ package com.portto.valuedapp.flow
 import androidx.annotation.WorkerThread
 import com.nftco.flow.sdk.Flow
 import com.nftco.flow.sdk.FlowAddress
-import com.nftco.flow.sdk.cadence.Field
 import com.nftco.flow.sdk.simpleFlowScript
 import com.portto.sdk.wallet.flow.CompositeSignature
 import kotlinx.coroutines.flow.flow
@@ -21,10 +20,9 @@ object FlowUtils {
     }
 
     @WorkerThread
-    fun sendQuery(isMainnet: Boolean, script: String, arguments: List<Field<*>>? = null) = flow {
+    fun sendQuery(isMainnet: Boolean, queryScript: String) = flow {
         val result = getFlowApi(isMainnet).simpleFlowScript {
-            script(script)
-            arguments?.forEach { arg(it) }
+            script(queryScript)
         }
         emit(result.jsonCadence.value)
     }

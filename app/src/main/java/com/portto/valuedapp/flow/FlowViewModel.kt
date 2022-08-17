@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nftco.flow.sdk.*
+import com.nftco.flow.sdk.cadence.JsonCadenceBuilder
 import com.nftco.flow.sdk.cadence.UFix64NumberField
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.flow.AccountProofData
@@ -104,7 +105,7 @@ class FlowViewModel : ViewModel() {
 
                 val transaction = FlowTransaction(
                     script = FlowScript(getSetValueScript(isMainnet)),
-                    arguments = listOf(FlowArgument(UFix64NumberField(inputValue))),
+                    arguments = listOf(FlowArgument(JsonCadenceBuilder().ufix64(inputValue))),
                     referenceBlockId = block.id,
                     gasLimit = 500L,
                     proposalKey = proposalKey,
