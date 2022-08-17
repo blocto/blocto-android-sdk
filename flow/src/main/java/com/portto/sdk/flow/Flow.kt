@@ -5,6 +5,7 @@ import com.portto.sdk.core.Blockchain
 import com.portto.sdk.core.BloctoSDK
 import com.portto.sdk.core.Chain
 import com.portto.sdk.flow.method.AuthenticateMethod
+import com.portto.sdk.flow.method.SendTransactionMethod
 import com.portto.sdk.flow.method.SignMessageMethod
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.flow.AccountProofData
@@ -48,6 +49,25 @@ class Flow : Chain {
         val method = SignMessageMethod(
             fromAddress = address,
             message = message,
+            onSuccess = onSuccess,
+            onError = onError
+        )
+        BloctoSDK.send(context, method)
+    }
+
+    /**
+     * Send transaction
+     */
+    fun sendTransaction(
+        context: Context,
+        address: String,
+        transaction: String,
+        onSuccess: (String) -> Unit,
+        onError: (BloctoSDKError) -> Unit
+    ) {
+        val method = SendTransactionMethod(
+            fromAddress = address,
+            encodedTxData = transaction,
             onSuccess = onSuccess,
             onError = onError
         )

@@ -16,9 +16,9 @@ import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.valuedapp.Config.APP_ID_MAINNET
 import com.portto.valuedapp.Config.APP_ID_TESTNET
 import com.portto.valuedapp.R
+import com.portto.valuedapp.Utils.shortenAddress
 import com.portto.valuedapp.databinding.ActivityEvmValueDappBinding
 import com.portto.valuedapp.hideKeyboard
-import com.portto.valuedapp.shortenAddress
 
 class EvmValueDappActivity : AppCompatActivity() {
 

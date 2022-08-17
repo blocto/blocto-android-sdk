@@ -11,34 +11,56 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.portto.sdk.core.BloctoSDK
 import com.portto.sdk.flow.flow
-import com.portto.valuedapp.Config
-import com.portto.valuedapp.R
+import com.portto.valuedapp.*
+import com.portto.valuedapp.Utils.shortenAddress
 import com.portto.valuedapp.databinding.ActivityFlowValueDappBinding
+import com.portto.valuedapp.databinding.LayoutGetValueBinding
+import com.portto.valuedapp.databinding.LayoutSetValueBinding
 import com.portto.valuedapp.databinding.LayoutSignMessageBinding
-import com.portto.valuedapp.mapToString
-import com.portto.valuedapp.shortenAddress
+import com.portto.valuedapp.flow.FlowUtils.mapToString
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 class FlowValueDappActivity : AppCompatActivity() {
     private lateinit var binding: ActivityFlowValueDappBinding
     private lateinit var signMsgBinding: LayoutSignMessageBinding
+    private lateinit var setValueBinding: LayoutSetValueBinding
+    private lateinit var getValueBinding: LayoutGetValueBinding
 
     private val viewModel by viewModels<FlowViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFlowValueDappBinding.inflate(layoutInflater)
-        signMsgBinding = LayoutSignMessageBinding.bind(binding.root)
+        with(binding.root) {
+            signMsgBinding = LayoutSignMessageBinding.bind(this)
+            setValueBinding = LayoutSetValueBinding.bind(this)
+            getValueBinding = LayoutGetValueBinding.bind(this)
+        }
+
         setContentView(binding.root)
 
         binding.setUpUi()
 
         signMsgBinding.setUpUi()
 
+        setValueBinding.setUpUi()
+
+        getValueBinding.setUpUi()
+
         viewModel.bindUi()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        binding.root.clearFocus()
     }
 
     private fun ActivityFlowValueDappBinding.setUpUi() {
@@ -65,6 +87,21 @@ class FlowValueDappActivity : AppCompatActivity() {
         signButton.setOnClickListener {
             signMessage(input.text?.toString())
         }
+    }
+
+    private fun LayoutSetValueBinding.setUpUi() {
+        valueInput.textChanges()
+            .onEach { setValueButton.isEnabled = !it.isNullOrEmpty() }
+            .launchIn(lifecycleScope)
+        setValueButton.setOnClickListener { sendTransaction() }
+        setValueTxHash.setOnClickListener {
+            val txHash = setValueTxHash.text.toString()
+            openExplorer(txHash)
+        }
+    }
+
+    private fun LayoutGetValueBinding.setUpUi() {
+        getValueButton.setOnClickListener { sendQuery() }
     }
 
     private fun FlowViewModel.bindUi() {
@@ -112,6 +149,50 @@ class FlowValueDappActivity : AppCompatActivity() {
                 Snackbar.make(binding.container, it, Snackbar.LENGTH_SHORT).show()
             }
         }
+
+        // Sign and send the transaction in Blocto app
+        sendTxData.observe(lifecycleOwner) { txData ->
+            txData?.let {
+                val address = viewModel.address.value
+                if (address.isNullOrEmpty()) return@observe
+
+                BloctoSDK.flow.sendTransaction(
+                    context = this@FlowValueDappActivity,
+                    address = address,
+                    transaction = txData,
+                    onSuccess = { viewModel.setTxHash(it) },
+                    onError = { viewModel.setErrorMessage(it) }
+                )
+                setValueBinding.setValueButton.hideLoading(getString(R.string.button_send_transaction))
+                viewModel.resetTxData()
+            }
+
+            lifecycleScope.launch {
+                viewModel.valueUiState.collectLatest {
+                    getValueBinding.getValueButton.hideLoading(getString(R.string.button_get_value))
+                    when (it) {
+                        is GetValueUiState.Success -> {
+                            getValueBinding.value.text = it.data
+                            getValueBinding.value.isVisible = true
+                        }
+                        is GetValueUiState.Failure -> {
+                            viewModel.setErrorMessage(it.exception.message ?: "Error")
+                            getValueBinding.value.isVisible = false
+                        }
+                    }
+                }
+            }
+        }
+
+        txHash.observe(lifecycleOwner) {
+            if (it.isNullOrEmpty()) {
+                setValueBinding.setValueTxHash.text = ""
+                setValueBinding.setValueTxHash.isVisible = false
+            } else {
+                setValueBinding.setValueTxHash.text = it
+                setValueBinding.setValueTxHash.isVisible = true
+            }
+        }
     }
 
     private fun logIn(withAccountProof: Boolean) {
@@ -146,6 +227,41 @@ class FlowValueDappActivity : AppCompatActivity() {
             message = msg,
             onSuccess = { viewModel.setUserSignatureData(it) },
             onError = { viewModel.setErrorMessage(it) })
+    }
+
+    private fun sendTransaction() {
+        val address = viewModel.address.value
+        if (address == null) {
+            viewModel.setErrorMessage("wallet not connected")
+            return
+        }
+
+        val env = viewModel.currentEnv.value
+        if (env == null) {
+            viewModel.setErrorMessage("env not set")
+            return
+        }
+
+        val inputText = setValueBinding.valueInput.text?.toString()
+        if (inputText.isNullOrEmpty()) {
+            viewModel.setErrorMessage("Input text is empty")
+            return
+        }
+        setValueBinding.root.hideKeyboard()
+        setValueBinding.setValueButton.showLoading()
+        viewModel.composeTransaction(address, inputText, env == FlowEnv.MAINNET)
+    }
+
+    private fun sendQuery() {
+        val env = viewModel.currentEnv.value
+        if (env == null) {
+            viewModel.setErrorMessage("env not set")
+            return
+        }
+
+        getValueBinding.root.hideKeyboard()
+        getValueBinding.getValueButton.showLoading()
+        viewModel.getValue(env == FlowEnv.MAINNET)
     }
 
     private fun showAuthenticationDialog() {

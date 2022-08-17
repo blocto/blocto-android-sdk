@@ -114,6 +114,18 @@ object RequestUriParser {
                     message = message
                 )
             }
+            METHOD_FLOW_SEND_TRANSACTION -> {
+                val fromAddress = uri.getQueryParameter(Const.KEY_FROM)
+                val flowTx = uri.getQueryParameter(Const.KEY_FLOW_TX)
+                if (fromAddress == null || flowTx == null) return ParseResult.Error
+                return ParseResult.FlowSendTransaction(
+                    appId = appId,
+                    requestId = requestId,
+                    blockchain = blockchain,
+                    fromAddress = fromAddress,
+                    flowTx = flowTx,
+                )
+            }
             else -> return ParseResult.Error
         }
     }

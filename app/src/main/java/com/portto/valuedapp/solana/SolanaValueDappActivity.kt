@@ -21,6 +21,7 @@ import com.portto.solana.web3.util.Cluster
 import com.portto.valuedapp.*
 import com.portto.valuedapp.Config.APP_ID_MAINNET
 import com.portto.valuedapp.Config.APP_ID_TESTNET
+import com.portto.valuedapp.Utils.shortenAddress
 import com.portto.valuedapp.databinding.ActivitySolanaValueDappBinding
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
