@@ -1,11 +1,13 @@
 package com.portto.sdk.core.network.service
 
+import androidx.annotation.WorkerThread
 import com.portto.sdk.core.network.BloctoApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 object SolanaService {
 
+    @WorkerThread
     fun createRawTransaction(requestBody: SolanaRawTxRequest): SolanaRawTxResponse {
         return BloctoApi.post("/solana/createRawTransaction", requestBody)
     }
