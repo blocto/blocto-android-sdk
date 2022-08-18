@@ -12,7 +12,7 @@ ext.versions = [
         androidx_lifecycle  : '2.5.1',
         androidx_viewmodel  : '2.4.1',
         androidx_constraint : '2.1.4',
-        coroutine           : '1.6.3',
+        coroutine           : '1.6.4',
         flow_sdk            : '0.7.1',
         material            : '1.6.1',
         okhttp              : '4.10.0',
