@@ -110,13 +110,6 @@ class SolanaTest {
 
     @Test
     fun `test sign and send program wallet transaction`() {
-        val response = SolanaRawTxResponse(
-            rawTx = "03020208dac7dab484e8d0f174360daad76fe7b849aa929c5103eff76cd6d30fd0ea947d08866fad950c85a54a4ab0300aac9870ee52cbdb85f0b587f16e1ae6b8e50800b14ade9ea1f267ce8f7d709c69f1614f9803d298833ce1259862772c2ccc913b0ead7cb1d9d3067d07ce4cbae4ee82e8a108586e96dd2dec95a8b09844e63ff82f044d6abceb87a88416562a21f1bb49e216f5f7a829bc88763a2b0664680fa3abd1ab6c38a200af3e21ef9790f98dd8857dcae9229e4b74de929f8c0b6fccc8aeb08762d01b472df8e2ba21e20132a5c218e2435e02d7e4a84030bcd6b9c2b9dfc7f2af100827ea33addbb9d430e457f5311bb905cb3a86a721bc58d72b270193c3ee6fd4e79da4349061266c77e2e3f4c47c1fd1f112bd5cb923170abe9988010607050300070201040d030302000601010300be150000",
-            extraData = SolanaRawTxResponse.ExtraData(
-                appendTx = emptyMap()
-            )
-        )
-//        every { createRawTransaction(any()) } returns response
 
         val solana = Solana(api)
 
