@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlinx-serialization'
 }
 
 apply from: "$rootDir/dependencies.gradle"
@@ -35,6 +36,7 @@ android {
 dependencies {
     api project(':core')
     implementation "androidx.core:core-ktx:$versions.androidx_core"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$versions.serialization"
 
     testImplementation "junit:junit:$versions.junit"
     testImplementation "org.robolectric:robolectric:$versions.robolectric"

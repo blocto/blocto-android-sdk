@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.annotation.WorkerThread
 import com.portto.sdk.core.*
 import com.portto.sdk.core.method.RequestAccountMethod
-import com.portto.sdk.core.network.service.SolanaService
 import com.portto.sdk.solana.method.SignAndSendTransactionMethod
+import com.portto.sdk.solana.model.SolanaRawTxRequest
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.solana.web3.AccountMeta
 import com.portto.solana.web3.Message
@@ -13,9 +13,9 @@ import com.portto.solana.web3.Transaction
 import com.portto.solana.web3.TransactionInstruction
 import org.komputing.kbase58.decodeBase58
 
-val BloctoSDK.solana by lazy { Solana() }
+val BloctoSDK.solana by lazy { Solana(SolanaService) }
 
-class Solana : Chain, Account {
+class Solana(private val api: SolanaService) : Chain, Account {
 
     private val walletProgramId
         get() = (if (BloctoSDK.debug) "Ckv4czD7qPmQvy2duKEa45WRp3ybD2XuaJzQAWrhAour"
@@ -79,8 +79,8 @@ class Solana : Chain, Account {
         transaction: Transaction
     ): Transaction {
         val rawTx = transaction.serializeMessage().toHexString()
-        val request = SolanaService.SolanaRawTxRequest(address, rawTx)
-        val response = SolanaService.createRawTransaction(request)
+        val request = SolanaRawTxRequest(address, rawTx)
+        val response = api.createRawTransaction(request)
         val message = Message.from(response.rawTx.decodeHex())
         return Transaction().apply {
             this.recentBlockhash = message.recentBlockhash

@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlinx-serialization'
 }
 
 apply from: "$rootDir/dependencies.gradle"
@@ -37,6 +38,7 @@ dependencies {
     implementation files("libs/kbase58.jar")
     implementation "androidx.core:core-ktx:$versions.androidx_core"
     implementation "com.portto.solana:web3:$versions.solana_web3"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$versions.serialization"
 
     testImplementation "junit:junit:$versions.junit"
     testImplementation "io.mockk:mockk:$versions.mockk"
