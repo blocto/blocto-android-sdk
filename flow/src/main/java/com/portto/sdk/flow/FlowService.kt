@@ -1,7 +1,7 @@
 package com.portto.sdk.flow
 
 import androidx.annotation.WorkerThread
-import com.portto.sdk.core.network.get
+import com.portto.sdk.core.get
 import com.portto.sdk.flow.model.FeePayerResponse
 
 

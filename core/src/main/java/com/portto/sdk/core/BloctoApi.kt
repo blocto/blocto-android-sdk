@@ -1,8 +1,7 @@
-package com.portto.sdk.core.network
+package com.portto.sdk.core
 
 import androidx.annotation.WorkerThread
 import androidx.viewbinding.BuildConfig
-import com.portto.sdk.core.BloctoSDK
 import com.portto.sdk.core.BuildConfig.VERSION_NAME
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -53,7 +52,6 @@ internal object BloctoApi {
         .addInterceptor(loggingInterceptor)
         .build()
 }
-
 
 inline fun <reified T> get(path: String): T {
     val request = Request.Builder()
