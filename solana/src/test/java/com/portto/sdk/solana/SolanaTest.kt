@@ -57,6 +57,7 @@ class SolanaTest {
     }
 
     private val context = mockk<Context>(relaxUnitFun = true)
+    private val api = SolanaService
     private val appId = "57f397df-263c-4e97-b61f-15b67b9ce285"
     private val solAddress = "zJ9A5VfCFdUsXAxouniMbDPMuj8MrWBosDwoQA3D78j"
     private val programId = PublicKey("G4YkbRN4nFQGEUg4SXzPsrManWzuk8bNq9JaMhXepnZ6")
@@ -68,7 +69,7 @@ class SolanaTest {
 
     @Test
     fun `test request account`() {
-        val solana = Solana(SolanaService)
+        val solana = Solana(api)
 
         solana.requestAccount(
             context = context,
@@ -83,7 +84,7 @@ class SolanaTest {
 
     @Test
     fun `test sign and send transaction`() {
-        val solana = Solana(SolanaService)
+        val solana = Solana(api)
 
         val transaction = createTransaction().apply {
             add(setValueInstruction(PublicKey(solAddress)))
@@ -117,7 +118,7 @@ class SolanaTest {
         )
 //        every { createRawTransaction(any()) } returns response
 
-        val solana = Solana(SolanaService)
+        val solana = Solana(api)
 
         val transaction = createTransaction().apply {
             add(setValueInstruction(PublicKey(solAddress)))
@@ -144,7 +145,7 @@ class SolanaTest {
 
     @Test
     fun `test sign and send transaction success callback`() {
-        val solana = Solana(SolanaService)
+        val solana = Solana(api)
 
         val transaction = createTransaction().apply {
             add(setValueInstruction(PublicKey(solAddress)))
@@ -173,7 +174,7 @@ class SolanaTest {
 
     @Test
     fun `test sign and send transaction error callback`() {
-        val solana = Solana(SolanaService)
+        val solana = Solana(api)
 
         val transaction = createTransaction().apply {
             add(setValueInstruction(PublicKey(solAddress)))
