@@ -1,9 +1,9 @@
-package com.portto.sdk.solana
+package com.portto.sdk.core.network
 
 import androidx.annotation.WorkerThread
+import androidx.viewbinding.BuildConfig
 import com.portto.sdk.core.BloctoSDK
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.portto.sdk.core.BuildConfig.VERSION_NAME
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -16,15 +16,13 @@ import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
 
 @WorkerThread
-class BloctoApi {
+internal object BloctoApi {
 
     private val jsonType = "application/json; charset=utf-8".toMediaType()
 
-    private val baseUrl get() = if (BloctoSDK.debug) {
-        "https://dev-api.blocto.app"
-    } else {
-        "https://api.blocto.app"
-    }
+    private val baseUrl
+        get() = if (BloctoSDK.debug) "https://api-staging.blocto.app/"
+        else "https://api.blocto.app"
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = if (BuildConfig.DEBUG) {
@@ -38,9 +36,13 @@ class BloctoApi {
         val request = chain.request()
         val builder = request.newBuilder().apply {
             addHeader("blocto-sdk-platform", "Android")
-            addHeader("blocto-sdk-version", BuildConfig.VERSION_NAME)
+            addHeader("blocto-sdk-version", VERSION_NAME)
         }.build()
         chain.proceed(builder)
+    }
+
+    private val json = Json {
+        ignoreUnknownKeys = true
     }
 
     private val client = OkHttpClient.Builder()
@@ -50,16 +52,13 @@ class BloctoApi {
         .addInterceptor(loggingInterceptor)
         .build()
 
-    private val json = Json {
-        ignoreUnknownKeys = true
-    }
 
-    fun createRawTransaction(requestBody: SolanaRawTxRequest): SolanaRawTxResponse {
-        val body = json.encodeToString(requestBody).toRequestBody(jsonType)
+    inline fun <reified T> get(path: String): T {
         val request = Request.Builder()
-            .url("$baseUrl/solana/createRawTransaction")
-            .post(body)
+            .url("$baseUrl/$path")
+            .get()
             .build()
+
         client.newCall(request).execute().use {
             if (it.isSuccessful) {
                 return json.decodeFromString(it.body?.string().orEmpty())
@@ -68,27 +67,21 @@ class BloctoApi {
             }
         }
     }
-}
 
-@Serializable
-data class SolanaRawTxRequest(
-    @SerialName("sol_address")
-    val address: String,
-    @SerialName("raw_tx")
-    val rawTx: String
-)
+    inline fun <reified T, reified U> post(path: String, requestBody: U): T {
+        val body = json.encodeToString(requestBody).toRequestBody(jsonType)
 
-@Serializable
-data class SolanaRawTxResponse(
-    @SerialName("raw_tx")
-    val rawTx: String,
-    @SerialName("extra_data")
-    val extraData: ExtraData
-) {
+        val request = Request.Builder()
+            .url("$baseUrl/$path")
+            .post(body)
+            .build()
 
-    @Serializable
-    data class ExtraData(
-        @SerialName("append_tx")
-        val appendTx: Map<String, String> = emptyMap()
-    )
+        client.newCall(request).execute().use {
+            if (it.isSuccessful) {
+                return json.decodeFromString(it.body?.string().orEmpty())
+            } else {
+                throw Exception("code: ${it.code}, message=${it.body?.string()}")
+            }
+        }
+    }
 }

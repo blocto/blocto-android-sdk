@@ -5,6 +5,7 @@ import androidx.annotation.WorkerThread
 import com.portto.sdk.core.Blockchain
 import com.portto.sdk.core.BloctoSDK
 import com.portto.sdk.core.Chain
+import com.portto.sdk.core.network.service.FlowService
 import com.portto.sdk.flow.method.AuthenticateMethod
 import com.portto.sdk.flow.method.SendTransactionMethod
 import com.portto.sdk.flow.method.SignMessageMethod
@@ -80,5 +81,5 @@ class Flow : Chain {
      * @return fee payer address
      */
     @WorkerThread
-    fun getFeePayerAddress(): String = BloctoApi.getFeePayer()
+    fun getFeePayerAddress(): String = FlowService.getFeePayer().address
 }
