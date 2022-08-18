@@ -5,7 +5,6 @@ import android.net.Uri
 import com.portto.sdk.core.BloctoSDK
 import com.portto.sdk.core.method.RequestAccountMethod
 import com.portto.sdk.core.network.service.SolanaService
-import com.portto.sdk.core.network.service.SolanaService.createRawTransaction
 import com.portto.sdk.core.toHexString
 import com.portto.sdk.solana.method.SignAndSendTransactionMethod
 import com.portto.sdk.wallet.BloctoSDKError
