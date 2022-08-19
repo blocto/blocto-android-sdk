@@ -5,6 +5,7 @@ import androidx.annotation.WorkerThread
 import com.portto.sdk.core.*
 import com.portto.sdk.core.method.RequestAccountMethod
 import com.portto.sdk.solana.method.SignAndSendTransactionMethod
+import com.portto.sdk.solana.model.SolanaRawTxRequest
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.solana.web3.AccountMeta
 import com.portto.solana.web3.Message
@@ -12,15 +13,13 @@ import com.portto.solana.web3.Transaction
 import com.portto.solana.web3.TransactionInstruction
 import org.komputing.kbase58.decodeBase58
 
-val BloctoSDK.solana by lazy { Solana(BloctoApi()) }
+val BloctoSDK.solana by lazy { Solana(SolanaService) }
 
-class Solana(private val api: BloctoApi) : Chain, Account {
+class Solana(private val api: SolanaService) : Chain, Account {
 
-    private val walletProgramId get() = if (BloctoSDK.debug) {
-        "Ckv4czD7qPmQvy2duKEa45WRp3ybD2XuaJzQAWrhAour"
-    } else {
-        "JBn9VwAiqpizWieotzn6FjEXrBu4fDe2XFjiFqZwp8Am"
-    }
+    private val walletProgramId
+        get() = (if (BloctoSDK.debug) "Ckv4czD7qPmQvy2duKEa45WRp3ybD2XuaJzQAWrhAour"
+        else "JBn9VwAiqpizWieotzn6FjEXrBu4fDe2XFjiFqZwp8Am")
 
     private var appendTxs = mutableMapOf<String, Map<String, String>>()
 

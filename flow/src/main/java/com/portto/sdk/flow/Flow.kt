@@ -12,9 +12,9 @@ import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.flow.AccountProofData
 import com.portto.sdk.wallet.flow.CompositeSignature
 
-val BloctoSDK.flow by lazy { Flow() }
+val BloctoSDK.flow by lazy { Flow(FlowService) }
 
-class Flow : Chain {
+class Flow(private val api: FlowService) : Chain {
 
     override val blockchain: Blockchain = Blockchain.FLOW
 
@@ -80,5 +80,5 @@ class Flow : Chain {
      * @return fee payer address
      */
     @WorkerThread
-    fun getFeePayerAddress(): String = BloctoApi.getFeePayer()
+    fun getFeePayerAddress(): String = api.getFeePayer().address
 }
