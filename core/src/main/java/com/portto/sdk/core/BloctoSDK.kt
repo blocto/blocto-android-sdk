@@ -27,7 +27,7 @@ object BloctoSDK {
     }
 
     @JvmStatic
-    fun send(context: Context, method: Method<*>, supportWebFallback: Boolean? = true) {
+    fun send(context: Context, method: Method<*>) {
         val appId = this.appId.takeIf { !it.isNullOrEmpty() } ?: kotlin.run {
             throw NullPointerException("App ID is required to use Blocto SDK. Check https://docs.blocto.app/blocto-sdk/register-app-id for more info.")
         }
@@ -44,14 +44,16 @@ object BloctoSDK {
         try {
             context.startActivity(intent)
         } catch (e: ActivityNotFoundException) {
-            if (supportWebFallback == true) {
+            if (method.blockchain == Blockchain.FLOW)
+                Log.w("BloctoSDK", "Flow does not support web fallback")
+            else {
                 val url = method.encodeToUri(
                     authority = Const.webSDKUrl(debug),
                     appId = appId,
                     requestId = requestId
                 ).build().toString()
                 context.startActivity(WebSDKActivity.newIntent(context, requestId, url))
-            } else Log.w("BloctoSDK", "Does not support web fallback")
+            }
         }
     }
 
