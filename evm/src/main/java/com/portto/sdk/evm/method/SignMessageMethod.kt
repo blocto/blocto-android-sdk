@@ -5,7 +5,7 @@ import com.portto.sdk.core.Blockchain
 import com.portto.sdk.core.method.Method
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.Const
-import com.portto.sdk.wallet.EvmSignType
+import com.portto.sdk.wallet.evm.EvmSignType
 
 class SignMessageMethod(
     private val fromAddress: String,

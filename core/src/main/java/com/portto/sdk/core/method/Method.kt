@@ -6,7 +6,7 @@ import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.Const
 
 abstract class Method<T>(
-    private val blockchain: Blockchain,
+    internal val blockchain: Blockchain,
     val onSuccess: (T) -> Unit,
     val onError: (BloctoSDKError) -> Unit
 ) {

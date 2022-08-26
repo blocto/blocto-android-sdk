@@ -32,27 +32,40 @@ android {
     buildFeatures {
         viewBinding true
     }
+    // Exclude protobuf javalite from all dependencies to resolve conflicts
+    configurations.all {
+        exclude group: "com.google.protobuf", module: "protobuf-javalite"
+    }
 }
 
 dependencies {
     implementation project(':evm')
     implementation project(':solana')
+    implementation project(':flow')
     implementation "androidx.core:core-ktx:$versions.androidx_core"
     implementation "androidx.appcompat:appcompat:$versions.androidx_appcompat"
-    implementation "com.google.android.material:material:$versions.material"
-    implementation "androidx.constraintlayout:constraintlayout:$versions.constraintlayout"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$versions.androidx_runtime"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.androidx_viewmodel"
+    implementation "androidx.constraintlayout:constraintlayout:$versions.androidx_constraint"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$versions.androidx_lifecycle"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.androidx_lifecycle"
     implementation "androidx.activity:activity-ktx:$versions.androidx_activity"
     implementation "androidx.fragment:fragment-ktx:$versions.androidx_fragment"
+    implementation "com.google.android.material:material:$versions.material"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutine"
     implementation "com.github.razir.progressbutton:progressbutton:$versions.progressbutton"
-    implementation "com.portto.solana:web3:$versions.solana_web3"
-    implementation ("org.web3j:core:$versions.web3j") {
+    implementation("com.jakewharton.timber:timber:$versions.timber")
+
+    implementation("com.github.komputing.khash:keccak:$versions.keccak")
+    implementation("com.portto.solana:web3:$versions.solana_web3")
+    implementation("org.web3j:core:$versions.web3j") {
+        exclude module: 'bcprov-jdk15on'
+
+    }
+    implementation("com.portto.ethereum:sign:$versions.eth_sign_util") {
         exclude module: 'bcprov-jdk15on'
     }
-    implementation ("com.portto.ethereum:sign:$versions.eth_sign_util") {
+
+    implementation("com.nftco:flow-jvm-sdk:0.7.1") {
         exclude module: 'bcprov-jdk15on'
     }
-    implementation "com.github.komputing.khash:keccak:$versions.keccak"
+    implementation("io.grpc:grpc-okhttp:1.47.0")
 }

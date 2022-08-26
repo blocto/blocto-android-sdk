@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.annotation.VisibleForTesting
 import com.portto.sdk.core.method.Method
 import com.portto.sdk.wallet.BloctoSDKError
@@ -43,12 +44,16 @@ object BloctoSDK {
         try {
             context.startActivity(intent)
         } catch (e: ActivityNotFoundException) {
-            val url = method.encodeToUri(
-                authority = Const.webSDKUrl(debug),
-                appId = appId,
-                requestId = requestId
-            ).build().toString()
-            context.startActivity(WebSDKActivity.newIntent(context, requestId, url))
+            if (method.blockchain == Blockchain.FLOW)
+                Log.w("BloctoSDK", "Flow does not support web fallback")
+            else {
+                val url = method.encodeToUri(
+                    authority = Const.webSDKUrl(debug),
+                    appId = appId,
+                    requestId = requestId
+                ).build().toString()
+                context.startActivity(WebSDKActivity.newIntent(context, requestId, url))
+            }
         }
     }
 

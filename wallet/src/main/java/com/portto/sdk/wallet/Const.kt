@@ -1,5 +1,14 @@
 package com.portto.sdk.wallet
 
+const val METHOD_REQUEST_ACCOUNT = "request_account"
+const val METHOD_SEND_TX = "send_transaction"
+const val METHOD_SIGN_AND_SEND_TX = "sign_and_send_transaction"
+const val METHOD_SIGN_MESSAGE = "sign_message"
+
+const val METHOD_FLOW_AUTHN = "authn"
+const val METHOD_FLOW_SIGN_MESSAGE = "user_signature"
+const val METHOD_FLOW_SEND_TRANSACTION = "flow_send_transaction"
+
 object Const {
 
     private const val BLOCTO_PACKAGE = "com.portto.blocto"
@@ -32,6 +41,13 @@ object Const {
     const val KEY_VALUE = "value"
     const val KEY_TYPE = "type"
     const val KEY_SIGNATURE = "signature"
+    const val KEY_ACCOUNT_PROOF = "account_proof" // Since 0.3.0 (Flow)
+    const val KEY_USER_SIGNATURE = "user_signature" // Since 0.3.0 (Flow)
+    const val KEY_KEY_ID = "key_id" // Since 0.3.0 (Flow)
+    const val KEY_FLOW_APP_ID = "flow_app_id" // Since 0.3.0 (Flow)
+    const val KEY_FLOW_NONCE = "flow_nonce" // Since 0.3.0 (Flow)
+    const val KEY_FLOW_TX = "flow_transaction" // Since 0.3.0 (Flow)
+
 
     fun bloctoAuthority(debug: Boolean): String = if (debug) {
         BLOCTO_URI_AUTHORITY_DEBUG
