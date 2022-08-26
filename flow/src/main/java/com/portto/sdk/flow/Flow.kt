@@ -34,7 +34,7 @@ class Flow(private val api: FlowService) : Chain {
             onSuccess = onSuccess,
             onError = onError
         )
-        BloctoSDK.send(context, method)
+        BloctoSDK.send(context, method, false)
     }
 
     /**
@@ -53,7 +53,7 @@ class Flow(private val api: FlowService) : Chain {
             onSuccess = onSuccess,
             onError = onError
         )
-        BloctoSDK.send(context, method)
+        BloctoSDK.send(context, method, false)
     }
 
     /**
@@ -72,7 +72,7 @@ class Flow(private val api: FlowService) : Chain {
             onSuccess = onSuccess,
             onError = onError
         )
-        BloctoSDK.send(context, method)
+        BloctoSDK.send(context, method, false)
     }
 
     /**

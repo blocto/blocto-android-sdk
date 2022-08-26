@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.annotation.VisibleForTesting
 import com.portto.sdk.core.method.Method
 import com.portto.sdk.wallet.BloctoSDKError
@@ -26,7 +27,7 @@ object BloctoSDK {
     }
 
     @JvmStatic
-    fun send(context: Context, method: Method<*>) {
+    fun send(context: Context, method: Method<*>, supportWebFallback: Boolean? = true) {
         val appId = this.appId.takeIf { !it.isNullOrEmpty() } ?: kotlin.run {
             throw NullPointerException("App ID is required to use Blocto SDK. Check https://docs.blocto.app/blocto-sdk/register-app-id for more info.")
         }
@@ -43,12 +44,14 @@ object BloctoSDK {
         try {
             context.startActivity(intent)
         } catch (e: ActivityNotFoundException) {
-            val url = method.encodeToUri(
-                authority = Const.webSDKUrl(debug),
-                appId = appId,
-                requestId = requestId
-            ).build().toString()
-            context.startActivity(WebSDKActivity.newIntent(context, requestId, url))
+            if (supportWebFallback == true) {
+                val url = method.encodeToUri(
+                    authority = Const.webSDKUrl(debug),
+                    appId = appId,
+                    requestId = requestId
+                ).build().toString()
+                context.startActivity(WebSDKActivity.newIntent(context, requestId, url))
+            } else Log.w("BloctoSDK", "Does not support web fallback")
         }
     }
 
