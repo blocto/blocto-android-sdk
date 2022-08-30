@@ -18,10 +18,12 @@ android {
         versionName "1.0.0"
     }
 
+    def signingFilePath = "secrets/signing.properties"
+    def isSigningFileExist = rootProject.file(signingFilePath).exists()
+
     signingConfigs {
         release {
-            def signingFilePath = "secrets/signing.properties"
-            if (!rootProject.file(signingFilePath).exists()) return
+            if (!isSigningFileExist) return
             def signingProperties = new Properties()
             rootProject.file(signingFilePath).withInputStream {
                 signingProperties.load(it)
@@ -37,7 +39,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            if (isSigningFileExist) {
+                signingConfig signingConfigs.release
+            }
             firebaseAppDistribution {
                 serviceCredentialsFile="secrets/app-distribution.json"
                 artifactType="APK"
