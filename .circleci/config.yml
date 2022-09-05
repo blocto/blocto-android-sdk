@@ -9,6 +9,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Generate google-services.json
+          command: echo $GOOGLE_SERVICES | base64 --decode > app/google-services.json
+      - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies
       - run:

@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.appdistribution'
 }
 
 apply from: "$rootDir/dependencies.gradle"
@@ -16,10 +18,35 @@ android {
         versionName "1.0.0"
     }
 
+    def signingFilePath = "secrets/signing.properties"
+    def isSigningFileExist = rootProject.file(signingFilePath).exists()
+
+    signingConfigs {
+        release {
+            if (!isSigningFileExist) return
+            def signingProperties = new Properties()
+            rootProject.file(signingFilePath).withInputStream {
+                signingProperties.load(it)
+            }
+            storeFile = rootProject.file("secrets/portto.jjs")
+            storePassword = signingProperties["STORE_PASSWORD"].toString()
+            keyAlias = signingProperties["KEY_ALIAS"].toString()
+            keyPassword = signingProperties["KEY_PASSWORD"].toString()
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (isSigningFileExist) {
+                signingConfig signingConfigs.release
+            }
+            firebaseAppDistribution {
+                serviceCredentialsFile="secrets/app-distribution.json"
+                artifactType="APK"
+                groups="portto"
+            }
         }
     }
     compileOptions {
@@ -67,4 +94,5 @@ dependencies {
         exclude module: 'bcprov-jdk15on'
     }
     implementation("io.grpc:grpc-okhttp:1.47.0")
+    implementation platform("com.google.firebase:firebase-bom:29.3.1")
 }
