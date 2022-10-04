@@ -8,6 +8,8 @@ apply from: "$rootDir/dependencies.gradle"
 apply from: "$rootDir/maven-publish.gradle"
 
 android {
+    namespace 'com.portto.sdk.solana'
+
     compileSdk versions.compileSdk
 
     defaultConfig {

@@ -8,6 +8,8 @@ plugins {
 apply from: "$rootDir/dependencies.gradle"
 
 android {
+    namespace 'com.portto.valuedapp'
+
     compileSdk versions.compileSdk
 
     defaultConfig {

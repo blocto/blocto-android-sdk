@@ -7,6 +7,8 @@ apply from: "$rootDir/dependencies.gradle"
 apply from: "$rootDir/maven-publish.gradle"
 
 android {
+    namespace 'com.portto.sdk.evm'
+
     compileSdk versions.compileSdk
 
     defaultConfig {
