@@ -53,7 +53,7 @@ class EvmValueDappActivity : AppCompatActivity() {
         setEnv(defaultEnv)
 
         binding.toolbar.setNavigationOnClickListener {
-            onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
         }
 
         val adapter = ArrayAdapter(

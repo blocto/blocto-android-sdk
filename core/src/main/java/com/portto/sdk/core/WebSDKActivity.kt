@@ -9,6 +9,7 @@ import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
@@ -42,8 +43,20 @@ class WebSDKActivity : AppCompatActivity() {
         binding = ActivityWebSdkBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        onBackPressedDispatcher.addCallback(this) {
+            if (requestId != null) {
+                val uri = Uri.Builder()
+                    .scheme(Const.BLOCTO_SCHEME)
+                    .appendQueryParameter(Const.KEY_REQUEST_ID, requestId)
+                    .appendQueryParameter(Const.KEY_ERROR, BloctoSDKError.USER_REJECTED.message)
+                    .build()
+                BloctoSDK.handleCallback(uri)
+            }
+            finish()
+        }
+
         binding.toolbar.setNavigationOnClickListener {
-            onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
         }
 
         val url = intent.getStringExtra(KEY_URL) ?: return
@@ -78,17 +91,5 @@ class WebSDKActivity : AppCompatActivity() {
             }
             loadUrl(url)
         }
-    }
-
-    override fun onBackPressed() {
-        if (requestId != null) {
-            val uri = Uri.Builder()
-                .scheme(Const.BLOCTO_SCHEME)
-                .appendQueryParameter(Const.KEY_REQUEST_ID, requestId)
-                .appendQueryParameter(Const.KEY_ERROR, BloctoSDKError.USER_REJECTED.message)
-                .build()
-            BloctoSDK.handleCallback(uri)
-        }
-        super.onBackPressed()
     }
 }

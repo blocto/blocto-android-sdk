@@ -18,11 +18,15 @@ import com.portto.solana.web3.PublicKey
 import com.portto.solana.web3.Transaction
 import com.portto.solana.web3.programs.SystemProgram
 import com.portto.solana.web3.util.Cluster
-import com.portto.valuedapp.*
 import com.portto.valuedapp.Config.APP_ID_MAINNET
 import com.portto.valuedapp.Config.APP_ID_TESTNET
+import com.portto.valuedapp.R
 import com.portto.valuedapp.Utils.shortenAddress
 import com.portto.valuedapp.databinding.ActivitySolanaValueDappBinding
+import com.portto.valuedapp.hideKeyboard
+import com.portto.valuedapp.hideLoading
+import com.portto.valuedapp.showLoading
+import com.portto.valuedapp.textChanges
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
@@ -65,7 +69,7 @@ class SolanaValueDappActivity : AppCompatActivity() {
         setEnv(defaultEnv)
 
         binding.toolbar.setNavigationOnClickListener {
-            onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
         }
 
         val adapter = ArrayAdapter(

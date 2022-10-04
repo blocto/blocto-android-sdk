@@ -16,13 +16,18 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.portto.sdk.core.BloctoSDK
 import com.portto.sdk.flow.flow
-import com.portto.valuedapp.*
+import com.portto.valuedapp.Config
+import com.portto.valuedapp.R
 import com.portto.valuedapp.Utils.shortenAddress
 import com.portto.valuedapp.databinding.ActivityFlowValueDappBinding
 import com.portto.valuedapp.databinding.LayoutGetValueBinding
 import com.portto.valuedapp.databinding.LayoutSetValueBinding
 import com.portto.valuedapp.databinding.LayoutSignMessageBinding
 import com.portto.valuedapp.flow.FlowUtils.mapToString
+import com.portto.valuedapp.hideKeyboard
+import com.portto.valuedapp.hideLoading
+import com.portto.valuedapp.showLoading
+import com.portto.valuedapp.textChanges
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -65,7 +70,7 @@ class FlowValueDappActivity : AppCompatActivity() {
 
     private fun ActivityFlowValueDappBinding.setUpUi() {
         toolbar.setNavigationOnClickListener {
-            onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
         }
 
         dropdown.apply {
