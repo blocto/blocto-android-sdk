@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.portto.sdk.core.BloctoSDK
 import com.portto.sdk.solana.solana
+import com.portto.sdk.wallet.BloctoEnv
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.solana.web3.Connection
 import com.portto.solana.web3.KeyPair
@@ -122,7 +123,13 @@ class SolanaValueDappActivity : AppCompatActivity() {
     }
 
     private fun setEnv(env: Env) {
-        BloctoSDK.init(appId = env.appId, debug = env.cluster == Cluster.DEVNET)
+        BloctoSDK.init(
+            appId = env.appId,
+            env = when (env.cluster) {
+                Cluster.MAINNET_BETA -> BloctoEnv.PROD
+                else -> BloctoEnv.DEV
+            }
+        )
         connection = Connection(env.cluster)
         currentAddress = null
         binding.connectButton.text = getString(R.string.button_connect)
@@ -318,7 +325,7 @@ class SolanaValueDappActivity : AppCompatActivity() {
             .authority("explorer.solana.com")
             .path("tx/$txHash")
             .apply {
-                if (BloctoSDK.debug) {
+                if (BloctoSDK.env == BloctoEnv.DEV) {
                     appendQueryParameter("cluster", "devnet")
                 }
             }

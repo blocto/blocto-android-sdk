@@ -12,6 +12,7 @@ import com.portto.sdk.evm.avalanche
 import com.portto.sdk.evm.bnb
 import com.portto.sdk.evm.ethereum
 import com.portto.sdk.evm.polygon
+import com.portto.sdk.wallet.BloctoEnv
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.valuedapp.Config.APP_ID_MAINNET
 import com.portto.valuedapp.Config.APP_ID_TESTNET
@@ -113,7 +114,13 @@ class EvmValueDappActivity : AppCompatActivity() {
     }
 
     private fun setEnv(env: Env) {
-        BloctoSDK.init(appId = env.appId, debug = env.debug)
+        BloctoSDK.init(
+            appId = env.appId,
+            env = when (env.debug) {
+                false -> BloctoEnv.PROD
+                true -> BloctoEnv.DEV
+            }
+        )
         viewModel.resetView()
     }
 

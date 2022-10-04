@@ -16,6 +16,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.portto.sdk.core.BloctoSDK
 import com.portto.sdk.flow.flow
+import com.portto.sdk.wallet.BloctoEnv
 import com.portto.valuedapp.Config
 import com.portto.valuedapp.R
 import com.portto.valuedapp.Utils.shortenAddress
@@ -113,7 +114,13 @@ class FlowValueDappActivity : AppCompatActivity() {
         val lifecycleOwner = this@FlowValueDappActivity
         currentEnv.observe(lifecycleOwner) {
             // Init SDK with updated env
-            BloctoSDK.init(appId = it.appId, debug = it == FlowEnv.TESTNET)
+            BloctoSDK.init(
+                appId = it.appId,
+                env = when (it) {
+                    FlowEnv.MAINNET -> BloctoEnv.PROD
+                    FlowEnv.TESTNET -> BloctoEnv.DEV
+                }
+            )
         }
 
         // Update Connect button to address once authenticated
@@ -307,7 +314,12 @@ class FlowValueDappActivity : AppCompatActivity() {
     private fun openExplorer(txHash: String) {
         val uri = Uri.Builder()
             .scheme("https")
-            .authority(if (BloctoSDK.debug) "testnet.flowscan.org" else "flowscan.org")
+            .authority(
+                when (BloctoSDK.env) {
+                    BloctoEnv.PROD -> "flowscan.org"
+                    BloctoEnv.DEV -> "testnet.flowscan.org"
+                }
+            )
             .path("transaction/$txHash")
             .build()
         startActivity(Intent(Intent.ACTION_VIEW, uri))

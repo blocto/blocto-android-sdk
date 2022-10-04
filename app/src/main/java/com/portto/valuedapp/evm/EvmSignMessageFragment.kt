@@ -13,6 +13,7 @@ import com.portto.sdk.evm.avalanche
 import com.portto.sdk.evm.bnb
 import com.portto.sdk.evm.ethereum
 import com.portto.sdk.evm.polygon
+import com.portto.sdk.wallet.BloctoEnv
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.evm.EvmSignType
 import com.portto.valuedapp.R
@@ -46,10 +47,9 @@ class EvmSignMessageFragment : Fragment(R.layout.fragment_evm_sign_message) {
     private lateinit var binding: FragmentEvmSignMessageBinding
     private val viewModel: EvmViewModel by activityViewModels()
 
-    private val rpcUrl get() = if (BloctoSDK.debug) {
-        viewModel.currentChain.testnetRpcUrl
-    } else {
-        viewModel.currentChain.mainnetRpcUrl
+    private val rpcUrl get() = when (BloctoSDK.env) {
+        BloctoEnv.PROD -> viewModel.currentChain.mainnetRpcUrl
+        BloctoEnv.DEV -> viewModel.currentChain.testnetRpcUrl
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

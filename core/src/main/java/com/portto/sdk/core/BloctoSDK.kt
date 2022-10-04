@@ -7,6 +7,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.annotation.VisibleForTesting
 import com.portto.sdk.core.method.Method
+import com.portto.sdk.wallet.BloctoEnv
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.Const
 import java.util.*
@@ -17,13 +18,13 @@ object BloctoSDK {
     private val requestMap = mutableMapOf<String, Method<*>>()
 
     @JvmStatic
-    var debug: Boolean = false
+    var env: BloctoEnv = BloctoEnv.PROD
         private set
 
     @JvmStatic
-    fun init(appId: String, debug: Boolean = false) {
+    fun init(appId: String, env: BloctoEnv = BloctoEnv.PROD) {
         this.appId = appId
-        this.debug = debug
+        this.env = env
     }
 
     @JvmStatic
@@ -34,12 +35,12 @@ object BloctoSDK {
         val requestId = UUID.randomUUID().toString()
         requestMap[requestId] = method
         val uri = method.encodeToUri(
-            authority = Const.bloctoAuthority(debug),
+            authority = Const.bloctoAuthority(env),
             appId = appId,
             requestId = requestId
         ).build()
         val intent = Intent(Intent.ACTION_VIEW, uri).apply {
-            setPackage(Const.bloctoPackage(debug))
+            setPackage(Const.bloctoPackage(env))
         }
         try {
             context.startActivity(intent)
@@ -48,7 +49,7 @@ object BloctoSDK {
                 Log.w("BloctoSDK", "Flow does not support web fallback")
             else {
                 val url = method.encodeToUri(
-                    authority = Const.webSDKUrl(debug),
+                    authority = Const.webSDKUrl(env),
                     appId = appId,
                     requestId = requestId
                 ).build().toString()
@@ -78,6 +79,6 @@ object BloctoSDK {
     @VisibleForTesting
     fun resetForTesting() {
         appId = null
-        debug = false
+        env = BloctoEnv.PROD
     }
 }
