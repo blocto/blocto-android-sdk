@@ -19,7 +19,7 @@ enum class EvmChain(
         mainnetContractAddress = "0xfde90c9Bc193F520d119302a2dB8520D3A4408c8",
         testnetContractAddress = "0x58F385777aa6699b81f741Dd0d5B272A34C1c774",
         mainnetRpcUrl = "https://mainnet.infura.io/v3/${Config.INFURA_ID}",
-        testnetRpcUrl = "https://rinkeby.infura.io/v3/${Config.INFURA_ID}",
+        testnetRpcUrl = "https://rinkeby.blocto.app",
         mainnetExplorerDomain = "etherscan.io",
         testnetExplorerDomain = "rinkeby.etherscan.io"
     ),
