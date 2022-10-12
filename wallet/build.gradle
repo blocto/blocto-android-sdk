@@ -8,6 +8,8 @@ apply from: "$rootDir/dependencies.gradle"
 apply from: "$rootDir/maven-publish.gradle"
 
 android {
+    namespace 'com.portto.sdk.wallet'
+
     compileSdk versions.compileSdk
 
     defaultConfig {

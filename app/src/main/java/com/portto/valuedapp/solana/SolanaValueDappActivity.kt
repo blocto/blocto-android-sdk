@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.portto.sdk.core.BloctoSDK
 import com.portto.sdk.solana.solana
+import com.portto.sdk.wallet.BloctoEnv
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.solana.web3.Connection
 import com.portto.solana.web3.KeyPair
@@ -18,11 +19,15 @@ import com.portto.solana.web3.PublicKey
 import com.portto.solana.web3.Transaction
 import com.portto.solana.web3.programs.SystemProgram
 import com.portto.solana.web3.util.Cluster
-import com.portto.valuedapp.*
 import com.portto.valuedapp.Config.APP_ID_MAINNET
 import com.portto.valuedapp.Config.APP_ID_TESTNET
+import com.portto.valuedapp.R
 import com.portto.valuedapp.Utils.shortenAddress
 import com.portto.valuedapp.databinding.ActivitySolanaValueDappBinding
+import com.portto.valuedapp.hideKeyboard
+import com.portto.valuedapp.hideLoading
+import com.portto.valuedapp.showLoading
+import com.portto.valuedapp.textChanges
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
@@ -65,7 +70,7 @@ class SolanaValueDappActivity : AppCompatActivity() {
         setEnv(defaultEnv)
 
         binding.toolbar.setNavigationOnClickListener {
-            onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
         }
 
         val adapter = ArrayAdapter(
@@ -118,7 +123,13 @@ class SolanaValueDappActivity : AppCompatActivity() {
     }
 
     private fun setEnv(env: Env) {
-        BloctoSDK.init(appId = env.appId, debug = env.cluster == Cluster.DEVNET)
+        BloctoSDK.init(
+            appId = env.appId,
+            env = when (env.cluster) {
+                Cluster.MAINNET_BETA -> BloctoEnv.PROD
+                else -> BloctoEnv.DEV
+            }
+        )
         connection = Connection(env.cluster)
         currentAddress = null
         binding.connectButton.text = getString(R.string.button_connect)
@@ -314,7 +325,7 @@ class SolanaValueDappActivity : AppCompatActivity() {
             .authority("explorer.solana.com")
             .path("tx/$txHash")
             .apply {
-                if (BloctoSDK.debug) {
+                if (BloctoSDK.env == BloctoEnv.DEV) {
                     appendQueryParameter("cluster", "devnet")
                 }
             }

@@ -8,6 +8,8 @@ apply from: "$rootDir/dependencies.gradle"
 apply from: "$rootDir/maven-publish.gradle"
 
 android {
+    namespace 'com.portto.sdk.core'
+
     compileSdk versions.compileSdk
 
     defaultConfig {
@@ -43,6 +45,7 @@ dependencies {
     implementation "androidx.core:core-ktx:$versions.androidx_core"
     implementation "androidx.browser:browser:$versions.androidx_browser"
     implementation "androidx.appcompat:appcompat:$versions.androidx_appcompat"
+    implementation "androidx.activity:activity-ktx:$versions.androidx_activity"
     implementation "com.google.android.material:material:$versions.material"
     implementation "com.squareup.okhttp3:okhttp:$versions.okhttp"
     implementation "com.squareup.okhttp3:logging-interceptor:$versions.okhttp"

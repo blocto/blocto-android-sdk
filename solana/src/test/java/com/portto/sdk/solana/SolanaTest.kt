@@ -6,7 +6,7 @@ import com.portto.sdk.core.BloctoSDK
 import com.portto.sdk.core.method.RequestAccountMethod
 import com.portto.sdk.core.toHexString
 import com.portto.sdk.solana.method.SignAndSendTransactionMethod
-import com.portto.sdk.solana.model.SolanaRawTxResponse
+import com.portto.sdk.wallet.BloctoEnv
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.Const
 import com.portto.solana.web3.AccountMeta
@@ -14,9 +14,18 @@ import com.portto.solana.web3.PublicKey
 import com.portto.solana.web3.Transaction
 import com.portto.solana.web3.TransactionInstruction
 import com.portto.solana.web3.programs.Program
-import io.mockk.*
-import org.junit.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.slot
+import io.mockk.unmockkStatic
+import io.mockk.verify
+import org.junit.After
+import org.junit.AfterClass
 import org.junit.Assert.assertEquals
+import org.junit.Before
+import org.junit.BeforeClass
+import org.junit.Test
 import org.junit.runner.RunWith
 import org.near.borshj.BorshBuffer
 import org.robolectric.RobolectricTestRunner
@@ -47,7 +56,7 @@ class SolanaTest {
     @Before
     fun setUp() {
         mockkStatic(BloctoSDK::class)
-        BloctoSDK.init(appId = appId, debug = true)
+        BloctoSDK.init(appId = appId, env = BloctoEnv.DEV)
     }
 
     @After

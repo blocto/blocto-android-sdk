@@ -11,14 +11,14 @@ const val METHOD_FLOW_SEND_TRANSACTION = "flow_send_transaction"
 
 object Const {
 
-    private const val BLOCTO_PACKAGE = "com.portto.blocto"
-    private const val BLOCTO_PACKAGE_DEBUG = "com.portto.blocto.staging"
+    private const val BLOCTO_PACKAGE_PROD = "com.portto.blocto"
+    private const val BLOCTO_PACKAGE_DEV = "com.portto.blocto.dev"
 
-    private const val BLOCTO_URI_AUTHORITY = "blocto.app"
-    private const val BLOCTO_URI_AUTHORITY_DEBUG = "staging.blocto.app"
+    private const val BLOCTO_URI_AUTHORITY_PROD = "blocto.app"
+    private const val BLOCTO_URI_AUTHORITY_DEV = "dev.blocto.app"
 
-    private const val WEB_SDK_URL = "wallet.blocto.app"
-    private const val WEB_SDK_URL_DEBUG = "wallet-testnet.blocto.app"
+    private const val WEB_SDK_URL_PROD = "wallet.blocto.app"
+    private const val WEB_SDK_URL_DEV = "wallet-testnet.blocto.app"
 
     const val HTTPS_SCHEME = "https"
     const val BLOCTO_SCHEME = "blocto"
@@ -49,21 +49,18 @@ object Const {
     const val KEY_FLOW_TX = "flow_transaction" // Since 0.3.0 (Flow)
 
 
-    fun bloctoAuthority(debug: Boolean): String = if (debug) {
-        BLOCTO_URI_AUTHORITY_DEBUG
-    } else {
-        BLOCTO_URI_AUTHORITY
+    fun bloctoAuthority(env: BloctoEnv): String = when (env) {
+        BloctoEnv.PROD -> BLOCTO_URI_AUTHORITY_PROD
+        BloctoEnv.DEV -> BLOCTO_URI_AUTHORITY_DEV
     }
 
-    fun bloctoPackage(debug: Boolean): String = if (debug) {
-        BLOCTO_PACKAGE_DEBUG
-    } else {
-        BLOCTO_PACKAGE
+    fun bloctoPackage(env: BloctoEnv): String = when (env) {
+        BloctoEnv.PROD -> BLOCTO_PACKAGE_PROD
+        BloctoEnv.DEV -> BLOCTO_PACKAGE_DEV
     }
 
-    fun webSDKUrl(debug: Boolean): String = if (debug) {
-        WEB_SDK_URL_DEBUG
-    } else {
-        WEB_SDK_URL
+    fun webSDKUrl(env: BloctoEnv): String = when (env) {
+        BloctoEnv.PROD -> WEB_SDK_URL_PROD
+        BloctoEnv.DEV -> WEB_SDK_URL_DEV
     }
 }

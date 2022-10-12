@@ -1,6 +1,7 @@
 package com.portto.valuedapp.solana
 
 import com.portto.sdk.core.BloctoSDK
+import com.portto.sdk.wallet.BloctoEnv
 import com.portto.solana.web3.AccountMeta
 import com.portto.solana.web3.PublicKey
 import com.portto.solana.web3.TransactionInstruction
@@ -17,16 +18,14 @@ object ValueProgram : Program() {
 
     private const val INSTRUCTION_SET_VALUE = 0
 
-    val programId get() = if (BloctoSDK.debug) {
-        PROGRAM_ID_DEVNET
-    } else {
-        PROGRAM_ID_MAINNET_BETA
+    val programId get() = when (BloctoSDK.env) {
+        BloctoEnv.PROD -> PROGRAM_ID_MAINNET_BETA
+        BloctoEnv.DEV -> PROGRAM_ID_DEVNET
     }
 
-    val accountPublicKey get() = if (BloctoSDK.debug) {
-        ACCOUNT_PUBLIC_KEY_DEVNET
-    } else {
-        ACCOUNT_PUBLIC_KEY_MAINNET_BETA
+    val accountPublicKey get() = when (BloctoSDK.env) {
+        BloctoEnv.PROD -> ACCOUNT_PUBLIC_KEY_MAINNET_BETA
+        BloctoEnv.DEV -> ACCOUNT_PUBLIC_KEY_DEVNET
     }
 
     fun createSetValueInstruction(

@@ -3,6 +3,7 @@ package com.portto.sdk.core
 import androidx.annotation.WorkerThread
 import androidx.viewbinding.BuildConfig
 import com.portto.sdk.core.BuildConfig.VERSION_NAME
+import com.portto.sdk.wallet.BloctoEnv
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -21,8 +22,10 @@ internal object BloctoApi {
     val jsonType = "application/json; charset=utf-8".toMediaType()
 
     val baseUrl
-        get() = if (BloctoSDK.debug) "https://api-staging.blocto.app/"
-        else "https://api.blocto.app"
+        get() = when (BloctoSDK.env) {
+            BloctoEnv.PROD -> "https://api.blocto.app"
+            BloctoEnv.DEV -> "https://api-dev.blocto.app/"
+        }
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = if (BuildConfig.DEBUG) {

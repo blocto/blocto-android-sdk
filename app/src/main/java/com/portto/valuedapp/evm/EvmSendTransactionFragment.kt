@@ -13,6 +13,7 @@ import com.portto.sdk.evm.avalanche
 import com.portto.sdk.evm.bnb
 import com.portto.sdk.evm.ethereum
 import com.portto.sdk.evm.polygon
+import com.portto.sdk.wallet.BloctoEnv
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.valuedapp.R
 import com.portto.valuedapp.databinding.FragmentEvmSendTransactionBinding
@@ -40,22 +41,19 @@ class EvmSendTransactionFragment : Fragment(R.layout.fragment_evm_send_transacti
     private lateinit var binding: FragmentEvmSendTransactionBinding
     private val viewModel: EvmViewModel by activityViewModels()
 
-    private val rpcUrl get() = if (BloctoSDK.debug) {
-        viewModel.currentChain.testnetRpcUrl
-    } else {
-        viewModel.currentChain.mainnetRpcUrl
+    private val rpcUrl get() = when (BloctoSDK.env) {
+        BloctoEnv.PROD -> viewModel.currentChain.mainnetRpcUrl
+        BloctoEnv.DEV -> viewModel.currentChain.testnetRpcUrl
     }
 
-    private val explorerDomain get() = if (BloctoSDK.debug) {
-        viewModel.currentChain.testnetExplorerDomain
-    } else {
-        viewModel.currentChain.mainnetExplorerDomain
+    private val explorerDomain get() = when (BloctoSDK.env) {
+        BloctoEnv.PROD -> viewModel.currentChain.mainnetExplorerDomain
+        BloctoEnv.DEV -> viewModel.currentChain.testnetExplorerDomain
     }
 
-    private val contractAddress get() = if (BloctoSDK.debug) {
-        viewModel.currentChain.testnetContractAddress
-    } else {
-        viewModel.currentChain.mainnetContractAddress
+    private val contractAddress get() = when (BloctoSDK.env) {
+        BloctoEnv.PROD -> viewModel.currentChain.mainnetContractAddress
+        BloctoEnv.DEV -> viewModel.currentChain.testnetContractAddress
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

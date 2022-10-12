@@ -6,7 +6,13 @@ import android.net.Uri
 import com.portto.sdk.core.method.RequestAccountMethod
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.Const
-import io.mockk.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.slot
+import io.mockk.spyk
+import io.mockk.unmockkStatic
+import io.mockk.verify
 import org.junit.After
 import org.junit.AfterClass
 import org.junit.Assert.assertEquals
@@ -112,7 +118,7 @@ class BloctoSDKTest {
         verify { context.startActivity(capture(intentSlot)) }
 
         val capturedData = intentSlot.captured.data
-        assertEquals(Const.bloctoAuthority(BloctoSDK.debug), capturedData?.authority)
+        assertEquals(Const.bloctoAuthority(BloctoSDK.env), capturedData?.authority)
         assertEquals(method.name, capturedData?.getQueryParameter(Const.KEY_METHOD))
         assertEquals(appId, capturedData?.getQueryParameter(Const.KEY_APP_ID))
         assertEquals(requestId, capturedData?.getQueryParameter(Const.KEY_REQUEST_ID))
