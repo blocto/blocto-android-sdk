@@ -15,6 +15,8 @@ Currently support
 * Avalanche
 * More blockchains are coming soon
 
+> For Flow, it's recommended to use [fcl](https://github.com/portto/fcl-android). Check the [documents](https://docs.blocto.app/blocto-sdk/android-sdk/flow) for more info.
+
 ## Installation
 
 Add the dependency below to your module's `build.gradle` file
@@ -45,6 +47,7 @@ object Config {
 ## Author
 
 [Jack](mailto:jack.lai@portto.com), [Kihon](mailto:kihon@portto.com)
+
 
 ## License
 
