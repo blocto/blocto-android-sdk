@@ -8,10 +8,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.portto.sdk.core.BloctoSDK
-import com.portto.sdk.evm.avalanche
-import com.portto.sdk.evm.bnb
-import com.portto.sdk.evm.ethereum
-import com.portto.sdk.evm.polygon
+import com.portto.sdk.evm.evm
 import com.portto.sdk.wallet.BloctoEnv
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.valuedapp.Config.APP_ID_MAINNET
@@ -134,27 +131,11 @@ class EvmValueDappActivity : AppCompatActivity() {
             viewModel.showError(it)
         }
 
-        when (viewModel.currentChain) {
-            EvmChain.ETHEREUM -> BloctoSDK.ethereum.requestAccount(
-                context = this,
-                onSuccess = requestAccountOnSuccess,
-                onError = requestAccountOnError
-            )
-            EvmChain.BNB_CHAIN -> BloctoSDK.bnb.requestAccount(
-                context = this,
-                onSuccess = requestAccountOnSuccess,
-                onError = requestAccountOnError
-            )
-            EvmChain.POLYGON -> BloctoSDK.polygon.requestAccount(
-                context = this,
-                onSuccess = requestAccountOnSuccess,
-                onError = requestAccountOnError
-            )
-            EvmChain.AVALANCHE -> BloctoSDK.avalanche.requestAccount(
-                context = this,
-                onSuccess = requestAccountOnSuccess,
-                onError = requestAccountOnError
-            )
-        }
+        BloctoSDK.evm.requestAccount(
+            context = this,
+            blockchain = viewModel.currentChain.blockchain,
+            onSuccess = requestAccountOnSuccess,
+            onError = requestAccountOnError
+        )
     }
 }
