@@ -80,7 +80,7 @@ class SignAndSendTransactionMethod(
             Const.HEADER_REQUEST_SOURCE to Const.SDK_RESOURCE
         )
 
-        val url = "${Const.webApiUrl(BloctoSDK.env)}/${blockchain.value}/${Const.PATH_AUTHZ_DAPP}"
+        val url = "${Const.webApiUrl(BloctoSDK.env)}/${blockchain.value}/${Const.PATH_DAPP}/${Const.PATH_AUTHZ}"
         val response: SendTransactionResponse = post(url, requestBody, headers)
         return super.encodeToWebUri(authority, appId, requestId, webSessionId)
             .appendPath(Const.PATH_AUTHZ)

@@ -57,11 +57,10 @@ object Const {
     const val KEY_SESSION_ID = "session_id"
     const val KEY_REQUEST_SOURCE = "request_source"
 
+    const val PATH_DAPP = "dapp"
     const val PATH_AUTHN = "authn"
     const val PATH_AUTHZ = "authz"
-    const val PATH_AUTHZ_DAPP = "authz-dapp"
     const val PATH_USER_SIGNATURE = "user-signature"
-    const val PATH_USER_SIGNATURE_DAPP = "user-signature-dapp"
 
     const val HEADER_SESSION_ID = "Blocto-Session-Identifier"
     const val HEADER_REQUEST_ID = "Blocto-Request-Identifier"

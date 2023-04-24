@@ -63,7 +63,7 @@ class SignMessageMethod(
             Const.HEADER_REQUEST_SOURCE to Const.SDK_RESOURCE
         )
 
-        val url = "${Const.webApiUrl(BloctoSDK.env)}/${blockchain.value}/${Const.PATH_USER_SIGNATURE_DAPP}"
+        val url = "${Const.webApiUrl(BloctoSDK.env)}/${blockchain.value}/${Const.PATH_DAPP}/${Const.PATH_USER_SIGNATURE}"
         val response: SignMessageResponse = post(url, requestBody, headers)
         return super.encodeToWebUri(authority, appId, requestId, webSessionId)
             .appendPath(Const.PATH_USER_SIGNATURE)
