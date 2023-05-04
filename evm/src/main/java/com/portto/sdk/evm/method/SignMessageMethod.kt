@@ -60,7 +60,7 @@ class SignMessageMethod(
         val headers = mapOf(
             Const.HEADER_SESSION_ID to sessionId,
             Const.HEADER_REQUEST_ID to requestId,
-            Const.HEADER_REQUEST_SOURCE to Const.SDK_RESOURCE
+            Const.HEADER_REQUEST_SOURCE to Const.SDK_SOURCE
         )
 
         val url = "${Const.webApiUrl(BloctoSDK.env)}/${blockchain.value}/${Const.PATH_DAPP}/${Const.PATH_USER_SIGNATURE}"

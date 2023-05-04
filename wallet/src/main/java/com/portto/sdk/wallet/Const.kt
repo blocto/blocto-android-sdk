@@ -29,7 +29,7 @@ object Const {
     const val HTTPS_SCHEME = "https"
     const val BLOCTO_SCHEME = "blocto"
     const val BLOCTO_URI_PATH = "sdk"
-    const val SDK_RESOURCE = "sdk_android"
+    const val SDK_SOURCE = "sdk_android"
 
     const val KEY_APP_ID = "app_id"
     const val KEY_REQUEST_ID = "request_id"

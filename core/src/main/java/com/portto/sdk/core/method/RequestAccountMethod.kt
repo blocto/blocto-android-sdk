@@ -32,6 +32,6 @@ class RequestAccountMethod(
         return super.encodeToWebUri(authority, appId, requestId, webSessionId)
             .appendPath(Const.PATH_AUTHN)
             .appendQueryParameter(Const.KEY_REQUEST_ID, requestId)
-            .appendQueryParameter(Const.KEY_REQUEST_SOURCE, Const.SDK_RESOURCE)
+            .appendQueryParameter(Const.KEY_REQUEST_SOURCE, Const.SDK_SOURCE)
     }
 }
