@@ -4,8 +4,8 @@ object Config {
     const val INFURA_ID = ""
 
     // Your Blocto App ID
-    const val APP_ID_MAINNET = "49618b1e-461b-4134-8f52-4307dd542a88"
-    const val APP_ID_TESTNET = "57f397df-263c-4e97-b61f-15b67b9ce285"
+    const val APP_ID_MAINNET = "0896e44c-20fd-443b-b664-d305b52fe8e8"
+    const val APP_ID_TESTNET = "0896e44c-20fd-443b-b664-d305b52fe8e8"
 
     // Required by Flow
     const val FLOW_APP_IDENTIFIER = "Awesome App (v0.0)"
