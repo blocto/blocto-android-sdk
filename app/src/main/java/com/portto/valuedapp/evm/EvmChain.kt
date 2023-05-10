@@ -19,13 +19,13 @@ enum class EvmChain(
         title = "Ethereum",
         symbol = "ETH",
         mainnetChainId = 1,
-        testnetChainId = 4,
+        testnetChainId = 5,
         mainnetContractAddress = "0xfde90c9Bc193F520d119302a2dB8520D3A4408c8",
-        testnetContractAddress = "0x58F385777aa6699b81f741Dd0d5B272A34C1c774",
+        testnetContractAddress = "0x806243c7368a90D957592B55875eF4C3353C5bEa",
         mainnetRpcUrl = "https://mainnet.infura.io/v3/${Config.INFURA_ID}",
-        testnetRpcUrl = "https://rinkeby.blocto.app",
+        testnetRpcUrl = "https://goerli.infura.io/v3/${Config.INFURA_ID}",
         mainnetExplorerDomain = "etherscan.io",
-        testnetExplorerDomain = "rinkeby.etherscan.io"
+        testnetExplorerDomain = "goerli.etherscan.io"
     ),
     BNB_CHAIN(
         title = "BNB Chain",
