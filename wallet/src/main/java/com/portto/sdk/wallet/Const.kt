@@ -17,12 +17,19 @@ object Const {
     private const val BLOCTO_URI_AUTHORITY_PROD = "blocto.app"
     private const val BLOCTO_URI_AUTHORITY_DEV = "dev.blocto.app"
 
-    private const val WEB_SDK_URL_PROD = "wallet.blocto.app"
-    private const val WEB_SDK_URL_DEV = "wallet-testnet.blocto.app"
+    private const val BLOCTO_API_URL_PROD = "https://api.blocto.app"
+    private const val BLOCTO_API_URL_DEV = "https://api-dev.blocto.app"
+
+    private const val WEB_SDK_URL_PROD = "wallet-v2.blocto.app"
+    private const val WEB_SDK_URL_DEV = "wallet-v2-dev.blocto.app"
+
+    private const val WEB_API_URL_PROD = "https://wallet-v2.blocto.app/api"
+    private const val WEB_API_URL_DEV = "https://wallet-v2-dev.blocto.app/api"
 
     const val HTTPS_SCHEME = "https"
     const val BLOCTO_SCHEME = "blocto"
     const val BLOCTO_URI_PATH = "sdk"
+    const val SDK_SOURCE = "sdk_android"
 
     const val KEY_APP_ID = "app_id"
     const val KEY_REQUEST_ID = "request_id"
@@ -47,7 +54,17 @@ object Const {
     const val KEY_FLOW_APP_ID = "flow_app_id" // Since 0.3.0 (Flow)
     const val KEY_FLOW_NONCE = "flow_nonce" // Since 0.3.0 (Flow)
     const val KEY_FLOW_TX = "flow_transaction" // Since 0.3.0 (Flow)
+    const val KEY_SESSION_ID = "session_id"
+    const val KEY_REQUEST_SOURCE = "request_source"
 
+    const val PATH_DAPP = "dapp"
+    const val PATH_AUTHN = "authn"
+    const val PATH_AUTHZ = "authz"
+    const val PATH_USER_SIGNATURE = "user-signature"
+
+    const val HEADER_SESSION_ID = "Blocto-Session-Identifier"
+    const val HEADER_REQUEST_ID = "Blocto-Request-Identifier"
+    const val HEADER_REQUEST_SOURCE = "Blocto-Request-Source"
 
     fun bloctoAuthority(env: BloctoEnv): String = when (env) {
         BloctoEnv.PROD -> BLOCTO_URI_AUTHORITY_PROD
@@ -59,8 +76,18 @@ object Const {
         BloctoEnv.DEV -> BLOCTO_PACKAGE_DEV
     }
 
+    fun bloctoApiUrl(env: BloctoEnv): String = when (env) {
+        BloctoEnv.PROD -> BLOCTO_API_URL_PROD
+        BloctoEnv.DEV -> BLOCTO_API_URL_DEV
+    }
+
     fun webSDKUrl(env: BloctoEnv): String = when (env) {
         BloctoEnv.PROD -> WEB_SDK_URL_PROD
         BloctoEnv.DEV -> WEB_SDK_URL_DEV
+    }
+
+    fun webApiUrl(env: BloctoEnv): String = when (env) {
+        BloctoEnv.PROD -> WEB_API_URL_PROD
+        BloctoEnv.DEV -> WEB_API_URL_DEV
     }
 }

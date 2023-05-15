@@ -1,8 +1,13 @@
 package com.portto.sdk.solana.method
 
 import android.net.Uri
+import androidx.annotation.WorkerThread
 import com.portto.sdk.core.Blockchain
+import com.portto.sdk.core.BloctoSDK
 import com.portto.sdk.core.method.Method
+import com.portto.sdk.core.model.SendTransactionResponse
+import com.portto.sdk.core.post
+import com.portto.sdk.solana.model.SendTransactionRequest
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.Const
 
@@ -12,7 +17,7 @@ class SignAndSendTransactionMethod(
     val isInvokeWrapped: Boolean,
     val publicKeySignaturePairs: Map<String, String>? = null,
     val appendTx: Map<String, String>? = null,
-    blockchain: Blockchain,
+    private val blockchain: Blockchain,
     onSuccess: (String) -> Unit,
     onError: (BloctoSDKError) -> Unit
 ) : Method<String>(blockchain, onSuccess, onError) {
@@ -48,5 +53,37 @@ class SignAndSendTransactionMethod(
                     )
                 }
             }
+    }
+
+    @WorkerThread
+    override fun encodeToWebUri(
+        authority: String,
+        appId: String,
+        requestId: String,
+        webSessionId: String?
+    ): Uri.Builder {
+        val sessionId = webSessionId ?: kotlin.run {
+            throw Throwable(BloctoSDKError.SESSION_ID_REQUIRED.message)
+        }
+
+        val requestBody = SendTransactionRequest(
+            from = fromAddress,
+            message = message,
+            isInvokeWrapped = isInvokeWrapped,
+            publicKeySignaturePairs = publicKeySignaturePairs,
+            appendTx = appendTx
+        )
+
+        val headers = mapOf(
+            Const.HEADER_SESSION_ID to sessionId,
+            Const.HEADER_REQUEST_ID to requestId,
+            Const.HEADER_REQUEST_SOURCE to Const.SDK_SOURCE
+        )
+
+        val url = "${Const.webApiUrl(BloctoSDK.env)}/${blockchain.value}/${Const.PATH_DAPP}/${Const.PATH_AUTHZ}"
+        val response: SendTransactionResponse = post(url, requestBody, headers)
+        return super.encodeToWebUri(authority, appId, requestId, webSessionId)
+            .appendPath(Const.PATH_AUTHZ)
+            .appendPath(response.authorizationId)
     }
 }

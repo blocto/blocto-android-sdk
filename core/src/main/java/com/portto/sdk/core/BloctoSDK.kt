@@ -7,14 +7,21 @@ import android.net.Uri
 import android.util.Log
 import androidx.annotation.VisibleForTesting
 import com.portto.sdk.core.method.Method
+import com.portto.sdk.core.method.RequestAccountMethod
 import com.portto.sdk.wallet.BloctoEnv
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.Const
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 object BloctoSDK {
 
     private var appId: String? = null
+    private var webSessionId: String? = null
     private val requestMap = mutableMapOf<String, Method<*>>()
 
     @JvmStatic
@@ -47,14 +54,33 @@ object BloctoSDK {
         } catch (e: ActivityNotFoundException) {
             if (method.blockchain == Blockchain.FLOW)
                 Log.w("BloctoSDK", "Flow does not support web fallback")
-            else {
-                val url = method.encodeToUri(
+            else
+                launchWebSDK(context, method, appId, requestId)
+        }
+    }
+
+    private fun launchWebSDK(
+        context: Context,
+        method: Method<*>,
+        appId: String,
+        requestId: String
+    ) {
+        val exceptionHandler = CoroutineExceptionHandler { _, error ->
+            val err = BloctoSDKError.values().find { it.message == error.message }
+                ?: BloctoSDKError.UNEXPECTED_ERROR
+            method.onError(err)
+        }
+
+        MainScope().launch(exceptionHandler) {
+            val url = withContext(Dispatchers.IO) {
+                method.encodeToWebUri(
                     authority = Const.webSDKUrl(env),
                     appId = appId,
-                    requestId = requestId
+                    requestId = requestId,
+                    webSessionId = webSessionId
                 ).build().toString()
-                context.startActivity(WebSDKActivity.newIntent(context, requestId, url))
             }
+            context.startActivity(WebSDKActivity.newIntent(context, requestId, url))
         }
     }
 
@@ -65,6 +91,9 @@ object BloctoSDK {
         val method = requestMap[requestId] ?: return
         requestMap.clear()
         if (handleError(method, uri)) return
+        if (method is RequestAccountMethod) {
+            webSessionId = uri.getQueryParameter(Const.KEY_SESSION_ID)
+        }
         method.handleCallback(uri)
     }
 
@@ -79,6 +108,7 @@ object BloctoSDK {
     @VisibleForTesting
     fun resetForTesting() {
         appId = null
+        webSessionId = null
         env = BloctoEnv.PROD
     }
 }
