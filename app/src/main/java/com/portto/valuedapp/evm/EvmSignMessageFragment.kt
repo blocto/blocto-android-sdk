@@ -9,10 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import com.portto.ethereum.sign.EthSigUtil
 import com.portto.sdk.core.BloctoSDK
 import com.portto.sdk.core.decodeHex
-import com.portto.sdk.evm.avalanche
-import com.portto.sdk.evm.bnb
-import com.portto.sdk.evm.ethereum
-import com.portto.sdk.evm.polygon
+import com.portto.sdk.evm.evm
 import com.portto.sdk.wallet.BloctoEnv
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.evm.EvmSignType
@@ -163,40 +160,15 @@ class EvmSignMessageFragment : Fragment(R.layout.fragment_evm_sign_message) {
             viewModel.showError(it)
         }
 
-        when (viewModel.currentChain) {
-            EvmChain.ETHEREUM -> BloctoSDK.ethereum.signMessage(
-                context = requireContext(),
-                fromAddress = address,
-                signType = signType,
-                message = message,
-                onSuccess = onSuccess,
-                onError = onError
-            )
-            EvmChain.BNB_CHAIN -> BloctoSDK.bnb.signMessage(
-                context = requireContext(),
-                fromAddress = address,
-                signType = signType,
-                message = message,
-                onSuccess = onSuccess,
-                onError = onError
-            )
-            EvmChain.POLYGON -> BloctoSDK.polygon.signMessage(
-                context = requireContext(),
-                fromAddress = address,
-                signType = signType,
-                message = message,
-                onSuccess = onSuccess,
-                onError = onError
-            )
-            EvmChain.AVALANCHE -> BloctoSDK.avalanche.signMessage(
-                context = requireContext(),
-                fromAddress = address,
-                signType = signType,
-                message = message,
-                onSuccess = onSuccess,
-                onError = onError
-            )
-        }
+        BloctoSDK.evm.signMessage(
+            context = requireContext(),
+            blockchain = viewModel.currentChain.blockchain,
+            fromAddress = address,
+            signType = signType,
+            message = message,
+            onSuccess = onSuccess,
+            onError = onError
+        )
     }
 
     private fun verifySignature(hash: ByteArray, signature: ByteArray): Boolean {

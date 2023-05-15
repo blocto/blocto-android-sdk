@@ -6,5 +6,7 @@ enum class Blockchain(val value: String) {
     BNB_CHAIN("bsc"),
     POLYGON("polygon"),
     AVALANCHE("avalanche"),
+    ARBITRUM("arbitrum"),
+    OPTIMISM("optimism"),
     FLOW("flow"),
 }
