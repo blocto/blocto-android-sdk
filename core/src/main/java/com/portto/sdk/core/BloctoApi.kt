@@ -1,7 +1,6 @@
 package com.portto.sdk.core
 
 import androidx.annotation.WorkerThread
-import androidx.viewbinding.BuildConfig
 import com.portto.sdk.core.BloctoApi.toErrorCode
 import com.portto.sdk.core.BuildConfig.VERSION_NAME
 import kotlinx.serialization.decodeFromString
