@@ -82,4 +82,4 @@ jobs:
           echo "All files Added ✅"
 
       - name: Distribute sample app
-        run: ./scripts/distribute.sh
+        run: bash ./scripts/distribute.sh
