@@ -18,6 +18,7 @@ android {
         targetSdk versions.compileSdk
         versionCode 1
         versionName "1.0.0"
+        versionNameSuffix "-" + getDate()
     }
 
     def signingFilePath = "secrets/signing.properties"
@@ -65,6 +66,10 @@ android {
     configurations.all {
         exclude group: "com.google.protobuf", module: "protobuf-javalite"
     }
+}
+
+static def getDate() {
+    return new Date().format('yyyyMMddHHmm')
 }
 
 dependencies {

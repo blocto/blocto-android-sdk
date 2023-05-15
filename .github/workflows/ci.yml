@@ -1,0 +1,85 @@
+name: CI
+
+on: push
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          google_services: ${{ secrets.GOOGLE_SERVICES }}
+
+      - name: Run lint
+        run: ./gradlew lint
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          google_services: ${{ secrets.GOOGLE_SERVICES }}
+
+      - name: Run test
+        run: ./gradlew test
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [ lint, test ]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          google_services: ${{ secrets.GOOGLE_SERVICES }}
+
+      - name: Build release
+        run: ./gradlew clean assembleRelease --stacktrace
+
+  distribute:
+    if: startsWith(github.ref_name, 'release/')
+    name: Distribute
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: build
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          google_services: ${{ secrets.GOOGLE_SERVICES }}
+
+      - name: Put files
+        env:
+          KEYSTORE: ${{ secrets.KEYSTORE } }}
+          SIGNING: ${{ secrets.SIGNING }}
+          APP_DISTRIBUTION: ${{ secrets.APP_DISTRIBUTION }}
+        run: |
+          echo "Adding files"
+          TMP_SECRETS_PATH=secrets
+          mkdir ${TMP_SECRETS_PATH}
+          echo $KEYSTORE | base64 -d > "${TMP_SECRETS_PATH}"/portto.jjs
+          echo $SIGNING | base64 -d > "${TMP_SECRETS_PATH}"/signing.properties
+          echo $APP_DISTRIBUTION | base64 -d > "${TMP_SECRETS_PATH}"/app-distribution.json
+          echo "All files Added ✅"
+
+      - name: Distribute sample app
+        run: ./scripts/distribute.sh
