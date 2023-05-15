@@ -56,6 +56,7 @@ object Const {
     const val KEY_FLOW_TX = "flow_transaction" // Since 0.3.0 (Flow)
     const val KEY_SESSION_ID = "session_id"
     const val KEY_REQUEST_SOURCE = "request_source"
+    const val KEY_PLATFORM = "platform"
 
     const val PATH_DAPP = "dapp"
     const val PATH_AUTHN = "authn"

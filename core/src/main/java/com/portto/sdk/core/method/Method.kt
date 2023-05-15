@@ -25,6 +25,7 @@ abstract class Method<T>(
             .appendQueryParameter(Const.KEY_REQUEST_ID, requestId)
             .appendQueryParameter(Const.KEY_METHOD, name)
             .appendQueryParameter(Const.KEY_BLOCKCHAIN, blockchain.value)
+            .appendQueryParameter(Const.KEY_PLATFORM, Const.SDK_SOURCE)
     }
 
     @WorkerThread
