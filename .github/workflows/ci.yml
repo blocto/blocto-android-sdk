@@ -1,0 +1,140 @@
+name: CI
+
+on: push
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          google_services: ${{ secrets.GOOGLE_SERVICES }}
+
+      - name: Run lint
+        run: ./gradlew lint
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          google_services: ${{ secrets.GOOGLE_SERVICES }}
+
+      - name: Run test
+        run: ./gradlew test
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [ lint, test ]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          google_services: ${{ secrets.GOOGLE_SERVICES }}
+
+      - name: Build release
+        run: ./gradlew clean assembleRelease --stacktrace
+
+  distribute:
+    if: startsWith(github.ref_name, 'release/')
+    name: Distribute
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: build
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          google_services: ${{ secrets.GOOGLE_SERVICES }}
+
+      - name: Put files
+        env:
+          KEYSTORE: ${{ secrets.KEYSTORE }}
+          SIGNING: ${{ secrets.SIGNING }}
+          APP_DISTRIBUTION: ${{ secrets.APP_DISTRIBUTION }}
+        run: |
+          echo "Adding files"
+          TMP_SECRETS_PATH=secrets
+          mkdir ${TMP_SECRETS_PATH}
+          echo $KEYSTORE | base64 -d > "${TMP_SECRETS_PATH}"/portto.jjs
+          echo $SIGNING | base64 -d > "${TMP_SECRETS_PATH}"/signing.properties
+          echo $APP_DISTRIBUTION | base64 -d > "${TMP_SECRETS_PATH}"/app-distribution.json
+          echo "All files Added ✅"
+
+      - name: Fill Infura id
+        run: sed -i 's/INFURA_ID.*/INFURA_ID = \"${{ secrets.INFURA_ID }}\"/' app/src/main/java/com/portto/valuedapp/Config.kt
+
+      - name: Distribute sample app
+        run: bash ./scripts/distribute.sh
+
+  publish:
+    if: github.ref_name == 'main'
+    name: Publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: build
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          google_services: ${{ secrets.GOOGLE_SERVICES }}
+
+      - name: Publish library
+        env:
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_PASSWORD }}
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
+        run: bash ./scripts/publish.sh
+
+      - name: Get version
+        run: |
+          echo "version=$(grep "versionName" dependencies.gradle | awk -F: '{print $2}' | tr -d ' '\',)" >> $GITHUB_ENV
+
+      - name: Create and push tag
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email noreply@github.com
+          git tag -a ${{ env.version }} -m "Release v${{ env.version }}"
+          git push origin ${{ env.version }}
+
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: v${{ env.version }}
+          tag_name: ${{ env.version }}
+          draft: false
+          prerelease: false
+
+      - name: Create pull request (main -> develop)
+        run: >
+          gh pr create
+          --base develop
+          --head main
+          --title '[${{ env.version }}] Merge main into develop'
+          --body 'Created by Github Actions'
+          --reviewer Doge-is-Dope,kihonyoo,imjacklai
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
