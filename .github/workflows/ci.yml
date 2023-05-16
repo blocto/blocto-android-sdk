@@ -81,6 +81,9 @@ jobs:
           echo $APP_DISTRIBUTION | base64 -d > "${TMP_SECRETS_PATH}"/app-distribution.json
           echo "All files Added ✅"
 
+      - name: Fill Infura id
+        run: sed -i 's/INFURA_ID.*/INFURA_ID = \"${{ secrets.INFURA_ID }}\"/' app/src/main/java/com/portto/valuedapp/Config.kt
+
       - name: Distribute sample app
         run: bash ./scripts/distribute.sh
 
