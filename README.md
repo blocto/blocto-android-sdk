@@ -1,18 +1,20 @@
 # BloctoSDK
 
 ![Maven Central](https://img.shields.io/maven-central/v/com.portto.sdk/core)
-![CircleCI](https://img.shields.io/circleci/build/gh/portto/blocto-android-sdk/main)
+![Github Action](https://github.com/portto/blocto-android-sdk/actions/workflows/ci.yml/badge.svg)
 ![GitHub](https://img.shields.io/github/license/portto/blocto-android-sdk)
 
 Integrate Blocto service into your dApp on Android.
 
 Currently support
 
-* Solana
 * Ethereum
+* Arbitrum
+* Optimism
 * BNB Chain
 * Polygon
 * Avalanche
+* Solana
 * More blockchains are coming soon
 
 > For Flow, it's recommended to use [fcl](https://github.com/portto/fcl-android). Check the [documents](https://docs.blocto.app/blocto-sdk/android-sdk/flow) for more info.
