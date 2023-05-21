@@ -9,10 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.portto.sdk.core.BloctoSDK
-import com.portto.sdk.evm.avalanche
-import com.portto.sdk.evm.bnb
-import com.portto.sdk.evm.ethereum
-import com.portto.sdk.evm.polygon
+import com.portto.sdk.evm.evm
 import com.portto.sdk.wallet.BloctoEnv
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.valuedapp.R
@@ -206,44 +203,16 @@ class EvmSendTransactionFragment : Fragment(R.layout.fragment_evm_send_transacti
         onSuccess: (String) -> Unit,
         onError: (BloctoSDKError) -> Unit
     ) {
-        when (viewModel.currentChain) {
-            EvmChain.ETHEREUM -> BloctoSDK.ethereum.sendTransaction(
-                context = requireContext(),
-                fromAddress = fromAddress,
-                toAddress = contractAddress,
-                data = data,
-                value = value,
-                onSuccess = onSuccess,
-                onError = onError
-            )
-            EvmChain.BNB_CHAIN -> BloctoSDK.bnb.sendTransaction(
-                context = requireContext(),
-                fromAddress = fromAddress,
-                toAddress = contractAddress,
-                data = data,
-                value = value,
-                onSuccess = onSuccess,
-                onError = onError
-            )
-            EvmChain.POLYGON -> BloctoSDK.polygon.sendTransaction(
-                context = requireContext(),
-                fromAddress = fromAddress,
-                toAddress = contractAddress,
-                data = data,
-                value = value,
-                onSuccess = onSuccess,
-                onError = onError
-            )
-            EvmChain.AVALANCHE -> BloctoSDK.avalanche.sendTransaction(
-                context = requireContext(),
-                fromAddress = fromAddress,
-                toAddress = contractAddress,
-                data = data,
-                value = value,
-                onSuccess = onSuccess,
-                onError = onError
-            )
-        }
+        BloctoSDK.evm.sendTransaction(
+            context = requireContext(),
+            blockchain = viewModel.currentChain.blockchain,
+            fromAddress = fromAddress,
+            toAddress = contractAddress,
+            data = data,
+            value = value,
+            onSuccess = onSuccess,
+            onError = onError
+        )
     }
 
     private fun openExplorer(txHash: String) {

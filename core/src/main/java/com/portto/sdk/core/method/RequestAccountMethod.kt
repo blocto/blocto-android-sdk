@@ -22,4 +22,16 @@ class RequestAccountMethod(
         }
         onSuccess(address)
     }
+
+    override fun encodeToWebUri(
+        authority: String,
+        appId: String,
+        requestId: String,
+        webSessionId: String?
+    ): Uri.Builder {
+        return super.encodeToWebUri(authority, appId, requestId, webSessionId)
+            .appendPath(Const.PATH_AUTHN)
+            .appendQueryParameter(Const.KEY_REQUEST_ID, requestId)
+            .appendQueryParameter(Const.KEY_REQUEST_SOURCE, Const.SDK_SOURCE)
+    }
 }

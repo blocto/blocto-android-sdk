@@ -9,10 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import com.portto.ethereum.sign.EthSigUtil
 import com.portto.sdk.core.BloctoSDK
 import com.portto.sdk.core.decodeHex
-import com.portto.sdk.evm.avalanche
-import com.portto.sdk.evm.bnb
-import com.portto.sdk.evm.ethereum
-import com.portto.sdk.evm.polygon
+import com.portto.sdk.evm.evm
 import com.portto.sdk.wallet.BloctoEnv
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.evm.EvmSignType
@@ -47,41 +44,24 @@ class EvmSignMessageFragment : Fragment(R.layout.fragment_evm_sign_message) {
     private lateinit var binding: FragmentEvmSignMessageBinding
     private val viewModel: EvmViewModel by activityViewModels()
 
+    private var signType = EvmSignType.ETH_SIGN
+
     private val rpcUrl get() = when (BloctoSDK.env) {
         BloctoEnv.PROD -> viewModel.currentChain.mainnetRpcUrl
         BloctoEnv.DEV -> viewModel.currentChain.testnetRpcUrl
+    }
+
+    private val chainId get() = when (BloctoSDK.env) {
+        BloctoEnv.PROD -> viewModel.currentChain.mainnetChainId
+        BloctoEnv.DEV -> viewModel.currentChain.testnetChainId
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentEvmSignMessageBinding.bind(view)
 
-        var signType = EvmSignType.ETH_SIGN
-
-        binding.chipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
-            val checkedId = checkedIds.firstOrNull() ?: return@setOnCheckedStateChangeListener
-            when (checkedId) {
-                binding.ethSign.id -> {
-                    signType = EvmSignType.ETH_SIGN
-                    binding.input.setText("0x416e79206d65737361676520796f752077616e6e61207369676e")
-                }
-                binding.personalSign.id -> {
-                    signType = EvmSignType.PERSONAL_SIGN
-                    binding.input.setText("Any message you wanna sign")
-                }
-                binding.typedDataV3.id -> {
-                    signType = EvmSignType.TYPED_DATA_SIGN_V3
-                    binding.input.setText(getString(R.string.default_typed_data_v3))
-                }
-                binding.typedDataV4.id -> {
-                    signType = EvmSignType.TYPED_DATA_SIGN_V4
-                    binding.input.setText(getString(R.string.default_typed_data_v4))
-                }
-                binding.typedData.id -> {
-                    signType = EvmSignType.TYPED_DATA_SIGN
-                    binding.input.setText(getString(R.string.default_typed_data_v4))
-                }
-            }
+        binding.chipGroup.setOnCheckedStateChangeListener { _, _ ->
+            setupMessage()
             resetView()
         }
 
@@ -91,6 +71,7 @@ class EvmSignMessageFragment : Fragment(R.layout.fragment_evm_sign_message) {
         }
 
         viewModel.resetView.observe(viewLifecycleOwner) {
+            setupMessage()
             resetView()
         }
     }
@@ -98,6 +79,32 @@ class EvmSignMessageFragment : Fragment(R.layout.fragment_evm_sign_message) {
     override fun onPause() {
         super.onPause()
         view?.clearFocus()
+    }
+
+    private fun setupMessage() {
+        val checkedId = binding.chipGroup.checkedChipIds.firstOrNull() ?: return
+        when (checkedId) {
+            binding.ethSign.id -> {
+                signType = EvmSignType.ETH_SIGN
+                binding.input.setText("0x416e79206d65737361676520796f752077616e6e61207369676e")
+            }
+            binding.personalSign.id -> {
+                signType = EvmSignType.PERSONAL_SIGN
+                binding.input.setText("Any message you wanna sign")
+            }
+            binding.typedDataV3.id -> {
+                signType = EvmSignType.TYPED_DATA_SIGN_V3
+                binding.input.setText(getString(R.string.default_typed_data_v3, chainId))
+            }
+            binding.typedDataV4.id -> {
+                signType = EvmSignType.TYPED_DATA_SIGN_V4
+                binding.input.setText(getString(R.string.default_typed_data_v4, chainId))
+            }
+            binding.typedData.id -> {
+                signType = EvmSignType.TYPED_DATA_SIGN
+                binding.input.setText(getString(R.string.default_typed_data_v4, chainId))
+            }
+        }
     }
 
     private fun signMessage(signType: EvmSignType) {
@@ -153,40 +160,15 @@ class EvmSignMessageFragment : Fragment(R.layout.fragment_evm_sign_message) {
             viewModel.showError(it)
         }
 
-        when (viewModel.currentChain) {
-            EvmChain.ETHEREUM -> BloctoSDK.ethereum.signMessage(
-                context = requireContext(),
-                fromAddress = address,
-                signType = signType,
-                message = message,
-                onSuccess = onSuccess,
-                onError = onError
-            )
-            EvmChain.BNB_CHAIN -> BloctoSDK.bnb.signMessage(
-                context = requireContext(),
-                fromAddress = address,
-                signType = signType,
-                message = message,
-                onSuccess = onSuccess,
-                onError = onError
-            )
-            EvmChain.POLYGON -> BloctoSDK.polygon.signMessage(
-                context = requireContext(),
-                fromAddress = address,
-                signType = signType,
-                message = message,
-                onSuccess = onSuccess,
-                onError = onError
-            )
-            EvmChain.AVALANCHE -> BloctoSDK.avalanche.signMessage(
-                context = requireContext(),
-                fromAddress = address,
-                signType = signType,
-                message = message,
-                onSuccess = onSuccess,
-                onError = onError
-            )
-        }
+        BloctoSDK.evm.signMessage(
+            context = requireContext(),
+            blockchain = viewModel.currentChain.blockchain,
+            fromAddress = address,
+            signType = signType,
+            message = message,
+            onSuccess = onSuccess,
+            onError = onError
+        )
     }
 
     private fun verifySignature(hash: ByteArray, signature: ByteArray): Boolean {

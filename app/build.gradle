@@ -18,6 +18,7 @@ android {
         targetSdk versions.compileSdk
         versionCode 1
         versionName "1.0.0"
+        versionNameSuffix "-" + getDate()
     }
 
     def signingFilePath = "secrets/signing.properties"
@@ -67,6 +68,10 @@ android {
     }
 }
 
+static def getDate() {
+    return new Date().format('yyyyMMddHHmm')
+}
+
 dependencies {
     implementation project(':evm')
     implementation project(':solana')
@@ -92,9 +97,9 @@ dependencies {
         exclude module: 'bcprov-jdk15on'
     }
 
-    implementation("com.nftco:flow-jvm-sdk:0.7.1") {
+    implementation("com.nftco:flow-jvm-sdk:0.7.3") {
         exclude module: 'bcprov-jdk15on'
     }
-    implementation("io.grpc:grpc-okhttp:1.47.0")
+    implementation("io.grpc:grpc-okhttp:1.50.2")
     implementation platform("com.google.firebase:firebase-bom:29.3.1")
 }

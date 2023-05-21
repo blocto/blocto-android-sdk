@@ -1,12 +1,13 @@
 package com.portto.sdk.core
 
 import androidx.annotation.WorkerThread
-import androidx.viewbinding.BuildConfig
+import com.portto.sdk.core.BloctoApi.toErrorCode
 import com.portto.sdk.core.BuildConfig.VERSION_NAME
-import com.portto.sdk.wallet.BloctoEnv
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -20,12 +21,6 @@ import java.util.concurrent.TimeUnit
 internal object BloctoApi {
 
     val jsonType = "application/json; charset=utf-8".toMediaType()
-
-    val baseUrl
-        get() = when (BloctoSDK.env) {
-            BloctoEnv.PROD -> "https://api.blocto.app"
-            BloctoEnv.DEV -> "https://api-dev.blocto.app/"
-        }
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = if (BuildConfig.DEBUG) {
@@ -54,11 +49,17 @@ internal object BloctoApi {
         .addInterceptor(headerInterceptor)
         .addInterceptor(loggingInterceptor)
         .build()
+
+    fun String.toErrorCode() = json.parseToJsonElement(this)
+        .jsonObject["error_code"]
+        ?.jsonPrimitive
+        ?.content
+        ?: this
 }
 
-inline fun <reified T> get(path: String): T {
+inline fun <reified T> get(url: String): T {
     val request = Request.Builder()
-        .url("${BloctoApi.baseUrl}/$path")
+        .url(url)
         .get()
         .build()
 
@@ -66,24 +67,33 @@ inline fun <reified T> get(path: String): T {
         if (it.isSuccessful) {
             return BloctoApi.json.decodeFromString(it.body?.string().orEmpty())
         } else {
-            throw Exception("code: ${it.code}, message=${it.body?.string()}")
+            throw Exception(it.body?.string()?.toErrorCode())
         }
     }
 }
 
-inline fun <reified T, reified U> post(path: String, requestBody: U): T {
+inline fun <reified T, reified U> post(
+    url: String,
+    requestBody: U,
+    headers: Map<String, String>? = null
+): T {
     val body = BloctoApi.json.encodeToString(requestBody).toRequestBody(BloctoApi.jsonType)
 
     val request = Request.Builder()
-        .url("${BloctoApi.baseUrl}/$path")
+        .url(url)
         .post(body)
+        .apply {
+            for ((key, value) in (headers ?: emptyMap())) {
+                addHeader(key, value)
+            }
+        }
         .build()
 
     BloctoApi.client.newCall(request).execute().use {
         if (it.isSuccessful) {
             return BloctoApi.json.decodeFromString(it.body?.string().orEmpty())
         } else {
-            throw Exception("code: ${it.code}, message=${it.body?.string()}")
+            throw Exception(it.body?.string()?.toErrorCode())
         }
     }
 }
