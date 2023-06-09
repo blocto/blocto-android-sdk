@@ -3,10 +3,13 @@ package com.portto.sdk.core
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
+import android.os.Message
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.addCallback
@@ -17,6 +20,7 @@ import com.portto.sdk.core.databinding.ActivityWebSdkBinding
 import com.portto.sdk.wallet.BloctoSDKError
 import com.portto.sdk.wallet.Const
 
+@SuppressLint("SetJavaScriptEnabled")
 class WebSDKActivity : AppCompatActivity() {
 
     companion object {
@@ -37,7 +41,6 @@ class WebSDKActivity : AppCompatActivity() {
     private lateinit var binding: ActivityWebSdkBinding
     private val requestId by lazy { intent.getStringExtra(Const.KEY_REQUEST_ID) }
 
-    @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityWebSdkBinding.inflate(layoutInflater)
@@ -60,9 +63,10 @@ class WebSDKActivity : AppCompatActivity() {
         }
 
         val url = intent.getStringExtra(KEY_URL) ?: return
+
         with(binding.webView) {
-            settings.javaScriptEnabled = true
-            settings.domStorageEnabled = true
+            settings.setup()
+
             webViewClient = object : WebViewClient() {
                 override fun shouldOverrideUrlLoading(
                     view: WebView?,
@@ -82,14 +86,60 @@ class WebSDKActivity : AppCompatActivity() {
                     binding.toolbar.title = view?.title
                 }
             }
+
             webChromeClient = object : WebChromeClient() {
                 override fun onProgressChanged(view: WebView?, newProgress: Int) {
                     super.onProgressChanged(view, newProgress)
                     binding.progressBar.progress = newProgress
                     binding.progressBar.isGone = newProgress == 100
                 }
+
+                override fun onCreateWindow(
+                    view: WebView?,
+                    isDialog: Boolean,
+                    isUserGesture: Boolean,
+                    resultMsg: Message?
+                ): Boolean = onCreateWebWindow(resultMsg)
             }
             loadUrl(url)
         }
+    }
+
+    private fun onCreateWebWindow(resultMsg: Message?): Boolean {
+        val webView = WebView(this@WebSDKActivity)
+        webView.settings.setup()
+
+        webView.webViewClient = object : WebViewClient() {
+            override fun onPageFinished(view: WebView?, url: String?) {
+                super.onPageFinished(view, url)
+                // Make WebView height match parent
+                val displayRectangle = Rect()
+                window.decorView.getWindowVisibleDisplayFrame(displayRectangle)
+                view?.layoutParams = view?.layoutParams?.apply {
+                    height = displayRectangle.height()
+                }
+            }
+        }
+
+        webView.webChromeClient = object : WebChromeClient() {
+            override fun onCloseWindow(window: WebView?) {
+                super.onCloseWindow(window)
+                binding.webView.removeView(window)
+            }
+        }
+
+        binding.webView.addView(webView)
+        val transport = resultMsg?.obj as WebView.WebViewTransport
+        transport.webView = webView
+        resultMsg.sendToTarget()
+        return true
+    }
+
+    private fun WebSettings.setup() {
+        javaScriptEnabled = true
+        domStorageEnabled = true
+        setSupportMultipleWindows(true)
+        // Remove "wv" from user agent to make Google login work
+        userAgentString = userAgentString.replace(oldValue = "; wv", newValue = "")
     }
 }
