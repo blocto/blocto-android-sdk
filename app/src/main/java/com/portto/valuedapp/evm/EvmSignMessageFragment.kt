@@ -6,7 +6,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import com.portto.ethereum.sign.EthSigUtil
 import com.portto.sdk.core.BloctoSDK
 import com.portto.sdk.core.decodeHex
 import com.portto.sdk.evm.evm
@@ -30,6 +29,7 @@ import org.web3j.abi.datatypes.DynamicBytes
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.generated.Bytes32
 import org.web3j.abi.datatypes.generated.Bytes4
+import org.web3j.crypto.StructuredDataEncoder
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.core.methods.request.Transaction
@@ -142,7 +142,7 @@ class EvmSignMessageFragment : Fragment(R.layout.fragment_evm_sign_message) {
                         EvmSignType.PERSONAL_SIGN -> message.toByteArray()
                         EvmSignType.TYPED_DATA_SIGN,
                         EvmSignType.TYPED_DATA_SIGN_V3,
-                        EvmSignType.TYPED_DATA_SIGN_V4 -> EthSigUtil.eip712Hash(message)
+                        EvmSignType.TYPED_DATA_SIGN_V4 -> StructuredDataEncoder(message).hashStructuredData()
                     }
                     val hash = Keccak.digest(messageByteArray, KeccakParameter.KECCAK_256)
                     val signatureByteArray = signature.removePrefix("0x").decodeHex()
