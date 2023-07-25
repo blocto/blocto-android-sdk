@@ -38,7 +38,8 @@ import org.web3j.protocol.http.HttpService
 class EvmSignMessageFragment : Fragment(R.layout.fragment_evm_sign_message) {
 
     companion object {
-        private const val ERC1271_MAGIC_VALUE = "0x1626ba7e00000000000000000000000000000000000000000000000000000000"
+        private const val ERC1271_MAGIC_VALUE =
+            "0x1626ba7e00000000000000000000000000000000000000000000000000000000"
     }
 
     private lateinit var binding: FragmentEvmSignMessageBinding
@@ -46,15 +47,17 @@ class EvmSignMessageFragment : Fragment(R.layout.fragment_evm_sign_message) {
 
     private var signType = EvmSignType.ETH_SIGN
 
-    private val rpcUrl get() = when (BloctoSDK.env) {
-        BloctoEnv.PROD -> viewModel.currentChain.mainnetRpcUrl
-        BloctoEnv.DEV -> viewModel.currentChain.testnetRpcUrl
-    }
+    private val rpcUrl
+        get() = when (BloctoSDK.env) {
+            BloctoEnv.PROD -> viewModel.currentChain.mainnetRpcUrl
+            BloctoEnv.DEV -> viewModel.currentChain.testnetRpcUrl
+        }
 
-    private val chainId get() = when (BloctoSDK.env) {
-        BloctoEnv.PROD -> viewModel.currentChain.mainnetChainId
-        BloctoEnv.DEV -> viewModel.currentChain.testnetChainId
-    }
+    private val chainId
+        get() = when (BloctoSDK.env) {
+            BloctoEnv.PROD -> viewModel.currentChain.mainnetChainId
+            BloctoEnv.DEV -> viewModel.currentChain.testnetChainId
+        }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -88,18 +91,22 @@ class EvmSignMessageFragment : Fragment(R.layout.fragment_evm_sign_message) {
                 signType = EvmSignType.ETH_SIGN
                 binding.input.setText("0x416e79206d65737361676520796f752077616e6e61207369676e")
             }
+
             binding.personalSign.id -> {
                 signType = EvmSignType.PERSONAL_SIGN
                 binding.input.setText("Any message you wanna sign")
             }
+
             binding.typedDataV3.id -> {
                 signType = EvmSignType.TYPED_DATA_SIGN_V3
                 binding.input.setText(getString(R.string.default_typed_data_v3, chainId))
             }
+
             binding.typedDataV4.id -> {
                 signType = EvmSignType.TYPED_DATA_SIGN_V4
                 binding.input.setText(getString(R.string.default_typed_data_v4, chainId))
             }
+
             binding.typedData.id -> {
                 signType = EvmSignType.TYPED_DATA_SIGN
                 binding.input.setText(getString(R.string.default_typed_data_v4, chainId))
@@ -139,10 +146,19 @@ class EvmSignMessageFragment : Fragment(R.layout.fragment_evm_sign_message) {
                 val isAuthorizedSigner = withContext(Dispatchers.IO) {
                     val messageByteArray = when (signType) {
                         EvmSignType.ETH_SIGN -> message.removePrefix("0x").decodeHex()
-                        EvmSignType.PERSONAL_SIGN -> message.toByteArray()
+                        EvmSignType.PERSONAL_SIGN -> {
+                            val data = message.toByteArray()
+                            ByteArray(0)
+                                .plus(0x19)
+                                .plus(0x45)
+                                .plus("thereum Signed Message:\n${data.size}".toByteArray())
+                                .plus(data)
+                        }
+
                         EvmSignType.TYPED_DATA_SIGN,
                         EvmSignType.TYPED_DATA_SIGN_V3,
-                        EvmSignType.TYPED_DATA_SIGN_V4 -> StructuredDataEncoder(message).hashStructuredData()
+                        EvmSignType.TYPED_DATA_SIGN_V4 ->
+                            StructuredDataEncoder(message).structuredData
                     }
                     val hash = Keccak.digest(messageByteArray, KeccakParameter.KECCAK_256)
                     val signatureByteArray = signature.removePrefix("0x").decodeHex()
