@@ -118,6 +118,7 @@ class EvmValueDappActivity : AppCompatActivity() {
 
         viewModel.resetView.observe(this) {
             binding.connectButton.text = getString(R.string.button_connect)
+            binding.rpcUrl.text = null
         }
     }
 
