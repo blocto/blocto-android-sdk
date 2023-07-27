@@ -38,20 +38,23 @@ class EvmSendTransactionFragment : Fragment(R.layout.fragment_evm_send_transacti
     private lateinit var binding: FragmentEvmSendTransactionBinding
     private val viewModel: EvmViewModel by activityViewModels()
 
-    private val rpcUrl get() = when (BloctoSDK.env) {
-        BloctoEnv.PROD -> viewModel.currentChain.mainnetRpcUrl
-        BloctoEnv.DEV -> viewModel.currentChain.testnetRpcUrl
-    }
+    private val rpcUrl
+        get() = viewModel.rpcUrl.value.takeUnless { it.isNullOrEmpty() } ?: when (BloctoSDK.env) {
+            BloctoEnv.PROD -> viewModel.currentChain.mainnetRpcUrl
+            BloctoEnv.DEV -> viewModel.currentChain.testnetRpcUrl
+        }
 
-    private val explorerDomain get() = when (BloctoSDK.env) {
-        BloctoEnv.PROD -> viewModel.currentChain.mainnetExplorerDomain
-        BloctoEnv.DEV -> viewModel.currentChain.testnetExplorerDomain
-    }
+    private val explorerDomain
+        get() = when (BloctoSDK.env) {
+            BloctoEnv.PROD -> viewModel.currentChain.mainnetExplorerDomain
+            BloctoEnv.DEV -> viewModel.currentChain.testnetExplorerDomain
+        }
 
-    private val contractAddress get() = when (BloctoSDK.env) {
-        BloctoEnv.PROD -> viewModel.currentChain.mainnetContractAddress
-        BloctoEnv.DEV -> viewModel.currentChain.testnetContractAddress
-    }
+    private val contractAddress
+        get() = when (BloctoSDK.env) {
+            BloctoEnv.PROD -> viewModel.currentChain.mainnetContractAddress
+            BloctoEnv.DEV -> viewModel.currentChain.testnetContractAddress
+        }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
