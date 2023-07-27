@@ -1,9 +1,13 @@
 package com.portto.valuedapp.evm
 
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -86,6 +90,13 @@ class EvmValueDappActivity : AppCompatActivity() {
             requestAccount()
         }
 
+        binding.rpcUrl.doOnTextChanged { text, _, _, _ ->
+            viewModel.setRpcUrl(text?.toString())
+        }
+        binding.pasteButton.setOnClickListener {
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            binding.rpcUrl.setText(clipboard.primaryClip?.getItemAt(0)?.text)
+        }
         binding.viewPager.adapter = EvmPagerAdapter(this)
         binding.viewPager.isUserInputEnabled = false
 

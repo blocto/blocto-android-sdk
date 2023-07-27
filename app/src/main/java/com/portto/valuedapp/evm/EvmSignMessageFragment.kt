@@ -48,7 +48,7 @@ class EvmSignMessageFragment : Fragment(R.layout.fragment_evm_sign_message) {
     private var signType = EvmSignType.ETH_SIGN
 
     private val rpcUrl
-        get() = when (BloctoSDK.env) {
+        get() = viewModel.rpcUrl.value.takeUnless { it.isNullOrEmpty() } ?: when (BloctoSDK.env) {
             BloctoEnv.PROD -> viewModel.currentChain.mainnetRpcUrl
             BloctoEnv.DEV -> viewModel.currentChain.testnetRpcUrl
         }
