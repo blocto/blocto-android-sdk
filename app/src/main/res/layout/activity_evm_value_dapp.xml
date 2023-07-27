@@ -71,7 +71,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:hint="RPC url"
+                    android:hint="@string/rpc_url"
                     app:layout_constraintBaseline_toBaselineOf="@id/paste_button"
                     app:layout_constraintEnd_toStartOf="@id/paste_button"
                     app:layout_constraintStart_toStartOf="parent"
